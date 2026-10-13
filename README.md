@@ -110,13 +110,18 @@ Install prompts appear when the PWA criteria are met (HTTPS, manifest, icons).
 
 ## Android (F-Droid oriented)
 
-A minimal **WebView** shell bundles the same UI for sideloading or F-Droid. FOSS
-AndroidX dependencies only — no Play Services, Firebase, ads, or analytics.
+**Tauri v2** wraps the same UI for sideloading or F-Droid (system WebView via WRY
+plus a small Rust runtime). FOSS toolchain — no Play Services, Firebase, ads, or
+analytics SDKs.
 
-- **Application id (placeholder):** `io.github.placeholder.qxgps` — change before
-  you publish (see [android/README.md](android/README.md)).
-- **Versioning:** `versionCode = MAJOR×10000 + MINOR×100 + PATCH` (0.2.0 → 200).
-- **Build:** `npm run build:android` then `cd android && ./gradlew assembleRelease`
+- **Application id (placeholder):** `io.github.placeholder.qxgps` — set the final
+  id in `src-tauri/tauri.conf.json` before you publish.
+- **Versioning:** `bundle.android.versionCode` in `tauri.conf.json` (0.2.0 → **200**).
+- **Build:** [docs/android-tauri.md](docs/android-tauri.md) — `npm run build:android`
+  (unsigned release APK) and `npm run build:android:debug`.
+- **CI:** [.github/workflows/tauri.yml](.github/workflows/tauri.yml) builds APK
+  artifacts on every PR; version tags also produce draft GitHub Releases (desktop
+  via `tauri-action`, Android APKs attached).
 - **Store metadata:** `fastlane/metadata/android/en-US/`
 - **Draft F-Droid recipe:** [docs/fdroid/io.github.placeholder.qxgps.yml](docs/fdroid/io.github.placeholder.qxgps.yml)
 

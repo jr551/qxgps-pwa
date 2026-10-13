@@ -6,7 +6,7 @@ All notable changes to this project are documented here.
 
 ### Added
 
-- Android WebView shell for F-Droid (FOSS deps, minify/shrink release APK).
+- Android app via **Tauri v2** (FOSS Rust/WebView shell) for F-Droid and CI APK builds.
 - fastlane `en-US` metadata and draft `docs/fdroid/io.github.placeholder.qxgps.yml`.
 - Public open-source release packaging (MIT licence, CI, secret scanning).
 - History track calendar via `location.QueryTrackDate` (per-day mileage chips).

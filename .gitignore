@@ -3,11 +3,7 @@ dist/
 dev-dist/
 uploads/
 android-sdk/
-android/.gradle/
-android/app/build/
-android/build/
-android/local.properties
-android/app/src/main/assets/
+src-tauri/target/
 *.local
 *.log
 .env

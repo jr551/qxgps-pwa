@@ -1,8 +1,5 @@
-# Draft F-Droid metadata — replace applicationId / repo URL before submitting.
-# https://f-droid.org/docs/Build_Metadata_Reference/
-#
-# Owner: set the real application id (e.g. io.github.<yourorg>.qxgps) in
-# android/app/build.gradle.kts and rename this file to match.
+# Draft F-Droid metadata — Tauri v2 Android build from source.
+# Replace PLACEHOLDER URLs and rename file to match your final application id.
 
 Categories:
   - Navigation
@@ -15,31 +12,34 @@ Changelog: https://github.com/PLACEHOLDER/qxgps-pwa/blob/main/CHANGELOG.md
 AutoName: QXGPS Lite
 Summary: Ad-free read-only client for QXGPS GPS trackers you own
 Description: |
-  Unofficial viewer for QXGPS / QXHL cloud trackers. Bundles the MIT-licensed
-  PWA; no ads or proprietary analytics. Read-only toward the vendor API.
+  Unofficial viewer for QXGPS / QXHL cloud trackers. Tauri v2 shell around the
+  MIT-licensed PWA — no ads or proprietary analytics. Read-only toward the vendor API.
 
   Requires your own vendor account. Not affiliated with the device maker.
 
 WebSite: https://github.com/PLACEHOLDER/qxgps-pwa
 
+# Toolchain pins (see docs/android-tauri.md):
+#   Rust 1.90.0, NDK r27c (27.2.12479018), @tauri-apps/cli 2.12.2, JDK 17
+
 Builds:
   - versionName: '0.2.0'
     versionCode: 200
     commit: v0.2.0
-    subdir: android
-    gradle:
-      - assembleRelease
+    subdir: .
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk-headless
+    init:
+      - rustup toolchain install 1.90.0 --profile minimal
+      - rustup default 1.90.0
+      - rustup target add aarch64-linux-android armv7-linux-androideabi i686-linux-android x86_64-linux-android
     prebuild:
-      - cd ..
       - npm ci
+      - sdkmanager "ndk;27.2.12479018" "platforms;android-34"
+      - export NDK_HOME=$$ANDROID_NDK_HOME$$
       - npm run build:android
-    scandelete:
-      - app/src/main/assets/public
-    output: app/build/outputs/apk/release/app-release-unsigned.apk
+    output: src-tauri/gen/android/app/build/outputs/apk/universal/release/app-universal-release-unsigned.apk
 
-# The vendor tracker cloud is proprietary; users choose to connect with their account.
 AntiFeatures:
   - NonFreeNet
-
-# No prebuilt native binaries in repo; APK is built from source on F-Droid builders.
-# Signatures: F-Droid signs release APKs with the official fdroid key.

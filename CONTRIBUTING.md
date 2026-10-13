@@ -25,15 +25,22 @@ npm run build
 Node 18+ (22 recommended). The production relay listens on `127.0.0.1:8787` by
 default (`npm run relay` after `npm run build`).
 
-### Android
+### Android (Tauri v2)
 
 ```bash
+npm ci
+export ANDROID_HOME=...   # Android SDK
+export NDK_HOME=$ANDROID_HOME/ndk/27.2.12479018
 npm run build:android
-cd android && ./gradlew assembleRelease
 ```
 
-See [android/README.md](android/README.md). Replace the placeholder application
-id before publishing to F-Droid or GitHub Releases.
+See [docs/android-tauri.md](docs/android-tauri.md). Replace the placeholder
+application id in `src-tauri/tauri.conf.json` before publishing to F-Droid or
+GitHub Releases.
+
+Optional CI APK signing: set repository variable `ANDROID_SIGN_APK=true` and secrets
+`ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`, and
+`ANDROID_KEY_PASSWORD` (see the Tauri workflow).
 
 ## Pull requests
 

@@ -1,0 +1,5 @@
+{
+  "build": {
+    "beforeBuildCommand": "VITE_PLATFORM=android npm run build:web"
+  }
+}
