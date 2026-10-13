@@ -27,6 +27,12 @@ Screenshots use **fictional vehicles** and **sample London-area map coordinates*
 | --- | --- |
 | ![Device](docs/screenshots/device.png) | ![Settings](docs/screenshots/settings.png) |
 
+## Example hardware
+
+![Example 4G OBD-II plug-in tracker listing](docs/screenshots/tracker-obd-listing.png)
+
+Example of the 4G OBD-II plug-in tracker class this client interoperates with (marketplace listing screenshot for identification only; not affiliated or endorsed).
+
 ## Disclaimer
 
 This project is **unofficial** and **not affiliated with, endorsed by, or sponsored
