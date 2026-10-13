@@ -153,6 +153,9 @@ jobs:
             Install the unsigned release APK (F-Droid builds from source and signs separately).
             For background monitoring and local notifications, use the APK — not the browser tab alone.
 
+            ## Alternative native app (patched vendor build, not FOSS)
+            `nativealternative-QXGPS_6.41.6_adfree_arm64.apk` equivalent: ad-free patched vendor build hosted on private Forgejo (requires access): https://git.rowe.lol/john/qxgps-research/releases/download/adfree-universal-6.41.6/QXGPS_6.41.6_adfree_arm64.apk — proprietary, not covered by this repo's MIT licence, excluded from F-Droid.
+
             See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md).
           draft: true
           files: release-files/**/*
