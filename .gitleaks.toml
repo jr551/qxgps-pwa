@@ -4,17 +4,13 @@ title = "qxgps-pwa gitleaks config"
 useDefault = true
 
 [allowlist]
-description = "Sample device identifiers and neutral demo coordinates in docs"
+description = "Sample device identifiers and neutral demo coordinates in docs and tests"
 paths = [
-  '''docs/screenshots/''',
-  '''docs/screenshots/preview.html''',
-  '''src/.*\.test\.ts''',
+  'docs/screenshots/.*',
+  'src/.*\.test\.ts',
 ]
-
-[allowlist.regexes]
-description = "Placeholder IMEI/ICCID patterns used in screenshots and fixtures"
 regexes = [
-  '''8900000000000000000\d''',
-  '''1000000000\d+''',
-  '''you@example\.com''',
+  '8900000000000000000\d',
+  '1000000000\d+',
+  'you@example\.com',
 ]
