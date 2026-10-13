@@ -152,7 +152,6 @@ no trackers or non-free libraries.
 notifications — see [PRIVACY.md](PRIVACY.md) and [docs/android-tauri.md](docs/android-tauri.md).
 No Firebase / Play Services.
 
-**Alternative native app (not FOSS):** ad-free patched vendor build `nativealternative-QXGPS_6.41.6_adfree_arm64.apk` equivalent, hosted on private Forgejo: https://git.rowe.lol/john/qxgps-research/releases/download/adfree-universal-6.41.6/QXGPS_6.41.6_adfree_arm64.apk — proprietary vendor binary, not MIT-licensed, excluded from F-Droid and GitHub release artifacts.
 
 ## Licence
 
