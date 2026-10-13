@@ -71,3 +71,19 @@ Pinned toolchains match this document (Rust **1.90.0**, NDK **27.2.12479018**, N
 Optional release APK signing: repository variable `ANDROID_SIGN_APK=true` plus
 secrets `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`,
 `ANDROID_KEY_PASSWORD`.
+
+## Background monitoring
+
+Native-only (not the browser PWA tab): Settings → **Background monitoring**. Uses
+read-only `family.GetRunInfo` + `alarm.Get` on an interval you choose (default 5
+minutes). Android shows a **foreground service** notification while enabled and
+uses WorkManager for Doze-friendly backup polls. No FCM / Play Services.
+
+| Android permission | Why |
+| --- | --- |
+| `INTERNET` | Vendor mapi HTTPS |
+| `POST_NOTIFICATIONS` | Local alerts for alarms / link-state changes |
+| `FOREGROUND_SERVICE` + `FOREGROUND_SERVICE_DATA_SYNC` | Persistent monitoring notification + scheduled sync |
+| `WAKE_LOCK` | Retry polling after Doze (no continuous wake lock) |
+
+The app does **not** request location, camera, microphone, or contacts.

@@ -129,6 +129,10 @@ analytics SDKs.
 proprietary vendor tracker cloud with their own account). The app itself contains
 no trackers or non-free libraries.
 
+**Native background monitoring** (Tauri only): optional read-only polling and local
+notifications — see [PRIVACY.md](PRIVACY.md) and [docs/android-tauri.md](docs/android-tauri.md).
+No Firebase / Play Services.
+
 ## Licence
 
 [MIT](LICENSE) — see [THIRD_PARTY_NOTICES](THIRD_PARTY_NOTICES) for dependencies.

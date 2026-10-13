@@ -43,3 +43,5 @@ Builds:
 
 AntiFeatures:
   - NonFreeNet
+  # Optional native background monitor uses a foreground service + local notifications
+  # (no proprietary push). Users enable it explicitly in Settings.

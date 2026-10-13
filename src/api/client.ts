@@ -273,6 +273,14 @@ export function hasStoredCredentials(): boolean {
   return loadCredentials() !== null;
 }
 
+/**
+ * Native (Tauri) background monitor only — reads the same stored login the PWA
+ * uses for silent re-login. Never log or display the returned password.
+ */
+export function credentialsForNativeMonitor(): { account: string; password: string } | null {
+  return loadCredentials();
+}
+
 function reloginOnce(): Promise<Session> {
   const creds = loadCredentials();
   if (!creds) return Promise.reject(new Error('no stored login'));

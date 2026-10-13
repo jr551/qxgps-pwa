@@ -16,7 +16,8 @@ import { HistoryScreen } from './screens/history';
 import { DeviceScreen } from './screens/device';
 import { SettingsScreen } from './screens/settings';
 import { LoginScreen } from './screens/login';
-import { hasStoredCredentials, restoreLogin } from './api/client';
+import { credentialsForNativeMonitor, hasStoredCredentials, restoreLogin } from './api/client';
+import { isTauriShell, loadBackgroundMonitorPrefs, syncNativeBackgroundMonitor } from './native/monitor';
 import { MapiError } from './api/types';
 import { startAlarmAlerts } from './alerts';
 import { APP_TITLE } from './brand';
@@ -108,7 +109,16 @@ export function App() {
 
   useEffect(() => {
     if (!session) return;
+    if (isTauriShell() && loadBackgroundMonitorPrefs().enabled) return;
     return startAlarmAlerts();
+  }, [session]);
+
+  useEffect(() => {
+    if (!session || !isTauriShell()) return;
+    const prefs = loadBackgroundMonitorPrefs();
+    if (!prefs.enabled) return;
+    const creds = credentialsForNativeMonitor();
+    void syncNativeBackgroundMonitor(prefs, session, creds?.password ?? null);
   }, [session]);
 
   useEffect(() => {

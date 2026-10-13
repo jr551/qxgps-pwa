@@ -12,11 +12,33 @@ advertising SDKs, or a project-operated backend.
 | `localStorage` (`qxgps.selectedSimei`) | Selected device token | Remember map focus |
 | `localStorage` (`qxgps.deviceNames`) | Friendly device labels | UI convenience |
 | `localStorage` (`qxgps.rememberAccount`) | Remember-me flag + email | Login form |
+| `localStorage` (`qxgps.backgroundMonitor`) | Native monitor toggle + interval | Tauri shell only |
+| Native app data (`monitor-state.json`) | Last device snapshots + seen alarm ids | Native background monitor |
 | Service worker caches | App shell, icons, offline page, OpenStreetMap tiles | Offline use |
 
 Passwords are stored only if you sign in successfully; they are **never** written
 to this repository. Clearing site data or using **Log out** removes session and
 stored credentials from the browser.
+
+## Native background monitoring (Tauri Android / desktop)
+
+When you turn on **Background monitoring** in Settings (Tauri builds only):
+
+- The app polls the vendor API on a timer using the same **read-only** calls as the
+  Live screen: `family.GetRunInfo` (link state, last comms time, reported battery
+  field) and `alarm.Get` (new alarms). It can show **local notifications** when
+  link state changes, reported battery crosses a low threshold, or a new alarm
+  appears. There is **no** Firebase, FCM, JPush, or Play Services push channel.
+- **Android** runs a **foreground service** with a persistent notification while
+  monitoring is enabled (required by Android for reliable background work) and may
+  schedule infrequent **WorkManager** backup polls under Doze. Optional permissions:
+  `POST_NOTIFICATIONS` (alert you locally), `FOGROUND_SERVICE*` / `WAKE_LOCK` (keep
+  read-only polling scheduled — no location/GPS permission is requested; the phone’s
+  GPS is not used).
+- **Desktop** keeps a tray icon and polls in a background Rust task while enabled.
+- Credentials and session used for polling are stored **on device** (same login
+  storage as the PWA plus the native monitor store). Disable monitoring or log out
+  to stop background polls.
 
 ## Data that leaves your device
 

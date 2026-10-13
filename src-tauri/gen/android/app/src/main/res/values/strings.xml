@@ -1,4 +1,8 @@
 <resources>
+    <string name="monitor_channel_name">Device monitoring</string>
+    <string name="monitor_channel_desc">Shown while background tracker checks are running</string>
+    <string name="monitor_notification_title">QXGPS Lite monitoring</string>
+    <string name="monitor_notification_body">Checking your devices on the vendor cloud (read-only).</string>
     <string name="app_name">QXGPS Lite</string>
     <string name="main_activity_title">QXGPS Lite</string>
 </resources>

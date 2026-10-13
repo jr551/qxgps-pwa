@@ -8,9 +8,15 @@
  */
 
 import { getAlarms, getRunInfo, getSession } from './api/client';
+import {
+  collectNewAlarmNotifications,
+  deviceSnapshotFromRunInfoItem,
+  diffDeviceSnapshots,
+} from './lib/monitor-shared';
 import { rememberDevices } from './state';
 
 const SEEN_KEY = 'qxgps.seenAlarms';
+const DEVICE_SNAP_KEY = 'qxgps.monitorDeviceSnap';
 const POLL_MS = 60_000;
 
 function loadSeen(): Set<string> {
@@ -42,11 +48,39 @@ export function requestAlarmAlerts(): void {
   }
 }
 
+function loadDeviceSnapshots(): Map<string, ReturnType<typeof deviceSnapshotFromRunInfoItem>> {
+  try {
+    const raw = localStorage.getItem(DEVICE_SNAP_KEY);
+    if (!raw) return new Map();
+    const parsed: unknown = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return new Map();
+    const map = new Map<string, ReturnType<typeof deviceSnapshotFromRunInfoItem>>();
+    for (const row of parsed) {
+      if (row && typeof row === 'object' && typeof (row as { simei?: string }).simei === 'string') {
+        map.set((row as { simei: string }).simei, row as ReturnType<typeof deviceSnapshotFromRunInfoItem>);
+      }
+    }
+    return map;
+  } catch {
+    return new Map();
+  }
+}
+
+function saveDeviceSnapshots(map: Map<string, ReturnType<typeof deviceSnapshotFromRunInfoItem>>): void {
+  try {
+    localStorage.setItem(DEVICE_SNAP_KEY, JSON.stringify([...map.values()]));
+  } catch {
+    // ignore
+  }
+}
+
 /** Poll alarm.Get and notify for alarms that appear after the first seed. */
 export function startAlarmAlerts(): () => void {
   let stopped = false;
   const seen = loadSeen();
-  let primed = seen.size > 0;
+  let alarmPrimed = seen.size > 0;
+  let deviceSnapshots = loadDeviceSnapshots();
+  let devicePrimed = deviceSnapshots.size > 0;
 
   const poll = async (): Promise<void> => {
     if (stopped || !getSession()) return;
@@ -55,24 +89,44 @@ export function startAlarmAlerts(): () => void {
       const info = await getRunInfo();
       const items = info.items ?? [];
       rememberDevices(items);
+      const snapshots = items.map((item) => deviceSnapshotFromRunInfoItem(item));
+      const { next, events: deviceEvents } = diffDeviceSnapshots(
+        deviceSnapshots,
+        snapshots,
+        devicePrimed,
+      );
+      deviceSnapshots = next;
+      devicePrimed = true;
+      saveDeviceSnapshots(deviceSnapshots);
+
       const now = Math.floor(Date.now() / 1000);
       const fresh: Array<{ id: string; title: string; body: string }> = [];
+      for (const event of deviceEvents) {
+        fresh.push({ id: event.id, title: event.title, body: event.body });
+      }
       for (const item of items) {
         const alarms = await getAlarms(item.simei, {
           limit: 10,
           start: now - 2 * 24 * 3600,
           end: now,
         });
-        for (const alarm of alarms) {
-          if (seen.has(alarm.id)) continue;
-          seen.add(alarm.id);
-          if (primed) {
-            const title = alarm.car_number || item.car_number || 'QXGPS Lite';
-            fresh.push({ id: alarm.id, title, body: alarm.content || alarm.alarm_type });
-          }
+        const collected = collectNewAlarmNotifications(
+          seen,
+          alarms.map((a) => ({
+            imei: a.imei ?? 0,
+            time: a.send_time,
+            type: a.alarm_type,
+            alarm_name: a.content,
+            car_number: a.car_number,
+          })),
+          item.car_number || 'QXGPS Lite',
+          alarmPrimed,
+        );
+        alarmPrimed = collected.primed;
+        for (const event of collected.events) {
+          fresh.push({ id: event.id, title: event.title, body: event.body });
         }
       }
-      primed = true;
       saveSeen(seen);
       for (const note of fresh.slice(0, 4)) {
         new Notification(note.title, { body: note.body, icon: '/icon-192.png', tag: note.id });

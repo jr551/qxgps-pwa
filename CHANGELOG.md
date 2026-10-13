@@ -6,6 +6,9 @@ All notable changes to this project are documented here.
 
 ### Added
 
+- Native **background monitor** (Tauri): read-only `GetRunInfo` + `alarm.Get` polling,
+  local notifications, Android foreground service + WorkManager backup, desktop tray task.
+- Shared monitor diff logic in `src/lib/monitor-shared.ts` (PWA tab alerts + native).
 - Android app via **Tauri v2** (FOSS Rust/WebView shell) for F-Droid and CI APK builds.
 - fastlane `en-US` metadata and draft `docs/fdroid/io.github.placeholder.qxgps.yml`.
 - Public open-source release packaging (MIT licence, CI, secret scanning).

@@ -15,7 +15,22 @@
 declare const __APP_VERSION__: string;
 
 import { useCallback, useEffect, useState } from 'preact/hooks';
-import { logout, MAPI_URL, rpc } from '../api/client';
+import { credentialsForNativeMonitor, logout, MAPI_URL, rpc } from '../api/client';
+import {
+  DEFAULT_MONITOR_INTERVAL_SEC,
+  MAX_MONITOR_INTERVAL_SEC,
+  MIN_MONITOR_INTERVAL_SEC,
+} from '../lib/monitor-shared';
+import {
+  fetchNativeMonitorStatus,
+  isTauriShell,
+  loadBackgroundMonitorPrefs,
+  openAndroidBatterySettings,
+  requestAndroidNotificationPermission,
+  saveBackgroundMonitorPrefs,
+  syncNativeBackgroundMonitor,
+  type MonitorStatus,
+} from '../native/monitor';
 import { MapiError, type MapiEnvelope } from '../api/types';
 import { requestAlarmAlerts } from '../alerts';
 import { AlarmsScreen } from './alarms';
@@ -115,6 +130,41 @@ export function SettingsScreen() {
 
   // (c) app info
   const [cache, setCache] = useState<CacheStatus>({ status: 'checking' });
+
+  const nativeShell = isTauriShell();
+  const [bgMonitor, setBgMonitor] = useState(() => loadBackgroundMonitorPrefs());
+  const [bgStatus, setBgStatus] = useState<MonitorStatus | null>(null);
+  const [bgNote, setBgNote] = useState<string | null>(null);
+  const [bgBusy, setBgBusy] = useState(false);
+
+  useEffect(() => {
+    if (!nativeShell || !session) return;
+    void fetchNativeMonitorStatus().then(setBgStatus);
+  }, [nativeShell, session]);
+
+  const applyBackgroundMonitor = async (next: { enabled: boolean; intervalSec: number }): Promise<void> => {
+    if (!session) return;
+    setBgBusy(true);
+    setBgNote(null);
+    try {
+      if (next.enabled) {
+        await requestAndroidNotificationPermission();
+      }
+      const creds = credentialsForNativeMonitor();
+      const status = await syncNativeBackgroundMonitor(
+        { enabled: next.enabled, intervalSec: next.intervalSec },
+        session,
+        creds?.password ?? null,
+      );
+      setBgMonitor({ enabled: next.enabled, intervalSec: next.intervalSec });
+      saveBackgroundMonitorPrefs({ enabled: next.enabled, intervalSec: next.intervalSec });
+      setBgStatus(status);
+    } catch (err) {
+      setBgNote(describeError(err));
+    } finally {
+      setBgBusy(false);
+    }
+  };
 
   useEffect(() => {
     const onPrompt = (event: Event) => {
@@ -287,6 +337,84 @@ export function SettingsScreen() {
             ) : null}
           </div>
         </section>
+
+        {nativeShell ? (
+          <section class="card">
+            <h3 class="card-title">Background monitoring (native)</h3>
+            <p class="card-note">
+              Polls <span class="mono">family.GetRunInfo</span> and{' '}
+              <span class="mono">alarm.Get</span> on an interval while you are signed in — same
+              read-only calls as the Live screen and in-tab alarm alerts. No Firebase or Play
+              Services.
+            </p>
+            <label class="row" style="align-items: center; gap: 0.5rem">
+              <input
+                type="checkbox"
+                checked={bgMonitor.enabled}
+                disabled={bgBusy || !session}
+                onChange={(event) => {
+                  const enabled = (event.target as HTMLInputElement).checked;
+                  void applyBackgroundMonitor({
+                    enabled,
+                    intervalSec: bgMonitor.intervalSec,
+                  });
+                }}
+              />
+              <span>Enable background device checks</span>
+            </label>
+            <div class="row" style="margin-top: var(--sp-sm)">
+              <label>
+                Interval (seconds){' '}
+                <input
+                  type="number"
+                  min={MIN_MONITOR_INTERVAL_SEC}
+                  max={MAX_MONITOR_INTERVAL_SEC}
+                  step={60}
+                  value={bgMonitor.intervalSec}
+                  disabled={bgBusy || !bgMonitor.enabled}
+                  onChange={(event) => {
+                    const value = Number((event.target as HTMLInputElement).value);
+                    if (!Number.isFinite(value)) return;
+                    setBgMonitor((prev) => ({ ...prev, intervalSec: value }));
+                  }}
+                  onBlur={() => {
+                    void applyBackgroundMonitor(bgMonitor);
+                  }}
+                />
+              </label>
+              <span class="muted">
+                Default {DEFAULT_MONITOR_INTERVAL_SEC}s ({MIN_MONITOR_INTERVAL_SEC}–
+                {MAX_MONITOR_INTERVAL_SEC}).
+              </span>
+            </div>
+            {bgStatus ? (
+              <p class="card-note">
+                Last poll: {bgStatus.last_poll_at ?? 'never'}
+                {bgStatus.last_poll_ok ? ' (ok)' : bgStatus.last_error ? ` — ${bgStatus.last_error}` : ''}
+                {bgStatus.android_service_running ? ' · Android foreground service active' : ''}
+              </p>
+            ) : null}
+            <div class="row" style="margin-top: var(--sp-sm)">
+              <button
+                class="btn btn-quiet"
+                type="button"
+                disabled={bgBusy}
+                onClick={() => void requestAndroidNotificationPermission()}
+              >
+                Notification permission
+              </button>
+              <button
+                class="btn btn-quiet"
+                type="button"
+                disabled={bgBusy}
+                onClick={() => void openAndroidBatterySettings()}
+              >
+                Battery optimisation settings
+              </button>
+            </div>
+            {bgNote ? <p class="card-note">{bgNote}</p> : null}
+          </section>
+        ) : null}
 
         {/* (c) app info */}
         <section class="card">
