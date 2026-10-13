@@ -4,8 +4,18 @@ import packageJson from './package.json';
 
 const isAndroid = process.env.VITE_PLATFORM === 'android';
 
+/** Project Pages serves at /qxgps-pwa/; self-hosted zips use /. */
+function webBase(): string {
+  if (isAndroid) return './';
+  const raw = (process.env.VITE_BASE_PATH ?? '').trim();
+  if (!raw) return '/';
+  return raw.endsWith('/') ? raw : `${raw}/`;
+}
+
+const base = webBase();
+
 export default defineConfig({
-  base: isAndroid ? './' : '/',
+  base,
   test: {
     environment: 'node',
     include: ['src/**/*.test.ts'],
@@ -34,7 +44,7 @@ export default defineConfig({
          * served offline. Any OTHER navigation URL falls through to the
          * NavigationRoute below → the tiny offline.html page.
          */
-        navigateFallback: '/offline.html',
+        navigateFallback: `${base}offline.html`,
         // A navigation fallback must never answer for the API endpoints.
         navigateFallbackDenylist: [/^\/mapi/, /^\/rvsgeo/],
 
@@ -75,15 +85,15 @@ export default defineConfig({
         name: 'QXGPS Lite (Ad Free)',
         short_name: 'QXGPS Lite',
         display: 'standalone',
-        start_url: '/',
-        scope: '/',
+        start_url: base,
+        scope: base,
         theme_color: '#0f172a',
         background_color: '#0f172a',
         icons: [
-          { src: '/icon-192.png', sizes: '192x192', type: 'image/png' },
-          { src: '/icon-512.png', sizes: '512x512', type: 'image/png' },
+          { src: `${base}icon-192.png`, sizes: '192x192', type: 'image/png' },
+          { src: `${base}icon-512.png`, sizes: '512x512', type: 'image/png' },
           {
-            src: '/icon-maskable-512.png',
+            src: `${base}icon-maskable-512.png`,
             sizes: '512x512',
             type: 'image/png',
             purpose: 'maskable',

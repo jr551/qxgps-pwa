@@ -25,18 +25,22 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci
-      - run: npm run typecheck && npm test && npm run lint && npm run build
+      - run: npm run typecheck && npm test && npm run lint
+      - name: Build PWA (root base, for self-host zip)
+        run: npm run build
       - name: Zip dist for GitHub Release
         run: (cd dist && zip -r "../qxgps-pwa-${GITHUB_REF_NAME}-dist.zip" .)
       - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4.6.0
         with:
-          name: pwa-dist
-          path: dist
-          if-no-files-found: error
-      - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4.6.0
-        with:
           name: pwa-zip
           path: qxgps-pwa-*-dist.zip
+          if-no-files-found: error
+      - name: Build PWA (project Pages base /qxgps-pwa/)
+        run: npm run build:pages
+      - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4.6.0
+        with:
+          name: pwa-dist
+          path: dist
           if-no-files-found: error
 
   android:

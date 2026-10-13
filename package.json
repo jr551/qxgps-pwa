@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:pages": "VITE_BASE_PATH=/qxgps-pwa/ vite build && cp dist/index.html dist/404.html",
     "build:web": "vite build",
     "tauri": "tauri",
     "build:android": "tauri android build --ci --apk",

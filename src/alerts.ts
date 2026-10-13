@@ -129,7 +129,7 @@ export function startAlarmAlerts(): () => void {
       }
       saveSeen(seen);
       for (const note of fresh.slice(0, 4)) {
-        new Notification(note.title, { body: note.body, icon: '/icon-192.png', tag: note.id });
+        new Notification(note.title, { body: note.body, icon: `${import.meta.env.BASE_URL}icon-192.png`, tag: note.id });
       }
     } catch {
       // The next poll retries. A failed read must not clear the seen set.
