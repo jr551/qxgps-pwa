@@ -1,0 +1,45 @@
+# Draft F-Droid metadata — replace applicationId / repo URL before submitting.
+# https://f-droid.org/docs/Build_Metadata_Reference/
+#
+# Owner: set the real application id (e.g. io.github.<yourorg>.qxgps) in
+# android/app/build.gradle.kts and rename this file to match.
+
+Categories:
+  - Navigation
+License: MIT
+AuthorName: qxgps-pwa contributors
+SourceCode: https://github.com/PLACEHOLDER/qxgps-pwa
+IssueTracker: https://github.com/PLACEHOLDER/qxgps-pwa/issues
+Changelog: https://github.com/PLACEHOLDER/qxgps-pwa/blob/main/CHANGELOG.md
+
+AutoName: QXGPS Lite
+Summary: Ad-free read-only client for QXGPS GPS trackers you own
+Description: |
+  Unofficial viewer for QXGPS / QXHL cloud trackers. Bundles the MIT-licensed
+  PWA; no ads or proprietary analytics. Read-only toward the vendor API.
+
+  Requires your own vendor account. Not affiliated with the device maker.
+
+WebSite: https://github.com/PLACEHOLDER/qxgps-pwa
+
+Builds:
+  - versionName: '0.2.0'
+    versionCode: 200
+    commit: v0.2.0
+    subdir: android
+    gradle:
+      - assembleRelease
+    prebuild:
+      - cd ..
+      - npm ci
+      - npm run build:android
+    scandelete:
+      - app/src/main/assets/public
+    output: app/build/outputs/apk/release/app-release-unsigned.apk
+
+# The vendor tracker cloud is proprietary; users choose to connect with their account.
+AntiFeatures:
+  - NonFreeNet
+
+# No prebuilt native binaries in repo; APK is built from source on F-Droid builders.
+# Signatures: F-Droid signs release APKs with the official fdroid key.

@@ -1,0 +1,1 @@
+Ad-free read-only client for QXGPS GPS trackers you own.

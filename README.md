@@ -108,6 +108,22 @@ is never cached** — positions are always fetched live.
 Modern Chromium, Firefox, and Safari with service worker and `fetch` support.
 Install prompts appear when the PWA criteria are met (HTTPS, manifest, icons).
 
+## Android (F-Droid oriented)
+
+A minimal **WebView** shell bundles the same UI for sideloading or F-Droid. FOSS
+AndroidX dependencies only — no Play Services, Firebase, ads, or analytics.
+
+- **Application id (placeholder):** `io.github.placeholder.qxgps` — change before
+  you publish (see [android/README.md](android/README.md)).
+- **Versioning:** `versionCode = MAJOR×10000 + MINOR×100 + PATCH` (0.2.0 → 200).
+- **Build:** `npm run build:android` then `cd android && ./gradlew assembleRelease`
+- **Store metadata:** `fastlane/metadata/android/en-US/`
+- **Draft F-Droid recipe:** [docs/fdroid/io.github.placeholder.qxgps.yml](docs/fdroid/io.github.placeholder.qxgps.yml)
+
+**F-Droid anti-features to declare:** `NonFreeNet` (users connect to the
+proprietary vendor tracker cloud with their own account). The app itself contains
+no trackers or non-free libraries.
+
 ## Licence
 
 [MIT](LICENSE) — see [THIRD_PARTY_NOTICES](THIRD_PARTY_NOTICES) for dependencies.

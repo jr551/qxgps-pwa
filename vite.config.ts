@@ -2,7 +2,10 @@ import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 import packageJson from './package.json';
 
+const isAndroid = process.env.VITE_PLATFORM === 'android';
+
 export default defineConfig({
+  base: isAndroid ? './' : '/',
   test: {
     environment: 'node',
     include: ['src/**/*.test.ts'],
@@ -12,6 +15,7 @@ export default defineConfig({
     __APP_VERSION__: JSON.stringify(packageJson.version),
   },
   plugins: [
+    !isAndroid &&
     VitePWA({
       registerType: 'autoUpdate',
       workbox: {
@@ -89,5 +93,5 @@ export default defineConfig({
         ],
       },
     }),
-  ],
+  ].filter(Boolean),
 });

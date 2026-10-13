@@ -6,6 +6,8 @@ All notable changes to this project are documented here.
 
 ### Added
 
+- Android WebView shell for F-Droid (FOSS deps, minify/shrink release APK).
+- fastlane `en-US` metadata and draft `docs/fdroid/io.github.placeholder.qxgps.yml`.
 - Public open-source release packaging (MIT licence, CI, secret scanning).
 - History track calendar via `location.QueryTrackDate` (per-day mileage chips).
 - Unit tests for MD5, geo helpers, track normalisation, and API parsers.

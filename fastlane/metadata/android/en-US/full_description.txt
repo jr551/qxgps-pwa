@@ -1,0 +1,13 @@
+QXGPS Lite is an unofficial, ad-free viewer for GPS trackers that use the QXGPS / QXHL vendor cloud. It wraps the same open-source web app in a minimal Android shell — no ads, no analytics SDKs, and no Google Play Services.
+
+Features:
+• Live map and device status
+• History tracks with playback
+• Device details (read-only)
+• Alarm list and optional notifications
+
+This app is strictly read-only toward the vendor platform: it does not send device commands or change configuration. You need your own tracker account.
+
+Disclaimer: not affiliated with or endorsed by the device manufacturer. Trademarks belong to their owners. Use only with hardware and accounts you are authorised to access, and comply with local privacy and tracking laws.
+
+The application ID uses a placeholder (io.github.placeholder.qxgps) until the maintainer publishes under their GitHub organisation.

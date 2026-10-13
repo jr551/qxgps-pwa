@@ -2,6 +2,12 @@ node_modules/
 dist/
 dev-dist/
 uploads/
+android-sdk/
+android/.gradle/
+android/app/build/
+android/build/
+android/local.properties
+android/app/src/main/assets/
 *.local
 *.log
 .env

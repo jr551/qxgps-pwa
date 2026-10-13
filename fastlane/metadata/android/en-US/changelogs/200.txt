@@ -1,0 +1,2 @@
+Initial F-Droid oriented Android shell (0.2.0).
+Bundled PWA assets, WebView-only FOSS dependencies, read-only tracker client.
