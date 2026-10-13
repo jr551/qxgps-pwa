@@ -1,0 +1,296 @@
+/* Live screen — map + device sidebar. Extends the palette in styles.css. */
+
+.live-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.85rem;
+  margin-bottom: 0.75rem;
+}
+
+.live-toolbar h2 {
+  margin: 0;
+  margin-right: auto;
+}
+
+.live-btn {
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--muted);
+  border-radius: 0.45rem;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.live-btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.live-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.live-updated {
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.live-paused {
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  background: #422006;
+  color: #fbbf24;
+  font-size: 0.75rem;
+}
+
+.live-banner {
+  margin-bottom: 0.75rem;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid #7f1d1d;
+  border-radius: 0.5rem;
+  background: #450a0a;
+  color: #fecaca;
+  font-size: 0.88rem;
+}
+
+.live-banner strong {
+  color: #fee2e2;
+}
+
+.live-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.85rem;
+  align-items: start;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+@media (min-width: 860px) {
+  .live-layout {
+    grid-template-columns: minmax(0, 22rem) minmax(0, 1fr);
+  }
+}
+
+/* ---------------------------------------------------------------- */
+/* Device sidebar                                                    */
+/* ---------------------------------------------------------------- */
+
+.dev-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  max-height: 78vh;
+  overflow-y: auto;
+}
+
+.dev-card {
+  display: block;
+  width: 100%;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid #334155;
+  border-radius: 0.6rem;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.dev-card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.dev-card-selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.dev-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.dev-name {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.dev-card-badges {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.dev-meta {
+  margin-top: 0.25rem;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.dev-bars {
+  margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.dev-bar-row {
+  display: grid;
+  grid-template-columns: 3.2rem 1fr auto;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.dev-bar-track {
+  height: 0.45rem;
+  border-radius: 999px;
+  background: #334155;
+  overflow: hidden;
+}
+
+.dev-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--accent);
+}
+
+.dev-bar-fill-low {
+  background: #f59e0b;
+}
+
+.dev-bar-fill-critical {
+  background: #ef4444;
+}
+
+.dev-bar-value {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Status badges */
+.dev-badge {
+  padding: 0.12rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.dev-badge-online {
+  background: #14532d;
+  color: #86efac;
+}
+
+.dev-badge-sleep {
+  background: #422006;
+  color: #fbbf24;
+}
+
+.dev-badge-offline {
+  background: #334155;
+  color: #cbd5e1;
+}
+
+.dev-badge-expired {
+  background: #7f1d1d;
+  color: #fecaca;
+}
+
+/* Loading skeleton + empty state */
+.skeleton-card {
+  height: 6.2rem;
+  border-radius: 0.6rem;
+  background: linear-gradient(100deg, var(--surface) 40%, #2b3a52 50%, var(--surface) 60%);
+  background-size: 200% 100%;
+  animation: live-shimmer 1.2s linear infinite;
+}
+
+@keyframes live-shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+.dev-empty {
+  padding: 1.25rem;
+  border: 1px dashed var(--muted);
+  border-radius: 0.6rem;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+/* ---------------------------------------------------------------- */
+/* Map                                                               */
+/* ---------------------------------------------------------------- */
+
+.live-map {
+  width: 100%;
+  max-width: 100%;
+  height: 45dvh;
+  min-height: 12rem;
+  border: 1px solid #334155;
+  border-radius: 0.6rem;
+  overflow: hidden;
+  background: var(--surface);
+}
+
+@media (min-width: 860px) {
+  .live-map {
+    height: 72vh;
+    min-height: 22rem;
+  }
+}
+
+/* Leaflet popups: readability on top of light OSM tiles */
+.live-map .leaflet-popup-content-wrapper {
+  background: var(--surface);
+  color: var(--text);
+  border-radius: 0.55rem;
+}
+
+.live-map .leaflet-popup-tip {
+  background: var(--surface);
+}
+
+.live-map .leaflet-popup-content {
+  margin: 0.7rem 0.85rem;
+}
+
+.dev-popup {
+  min-width: 0;
+  max-width: 100%;
+  font-size: 0.82rem;
+}
+
+.dev-popup-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+  overflow-wrap: anywhere;
+}
+
+.dev-popup-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.85rem;
+  padding: 0.1rem 0;
+}
+
+.dev-popup-key {
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.dev-popup-val {
+  text-align: right;
+  overflow-wrap: anywhere;
+}

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>QXGPS Lite (Ad Free)</title>
+  <link rel="stylesheet" href="../../src/styles.css" />
+  <link rel="stylesheet" href="../../src/screens/live.css" />
+  <link rel="stylesheet" href="../../src/screens/history.css" />
+  <link rel="stylesheet" href="../../src/screens/device.css" />
+  <link rel="stylesheet" href="../../node_modules/leaflet/dist/leaflet.css" />
+  <style>
+    html, body { height: 100%; background: var(--bg); }
+    body { margin: 0; overflow: hidden; }
+    .shell { height: 100dvh; }
+    .content { overflow: auto; }
+    .shot-map { height: 16rem; border-radius: 0.6rem; }
+    .history-map { height: 11.5rem; }
+    .shot { display: none; }
+    .shot.on { display: block; }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="header">
+      <h1 class="header-title">QXGPS Lite (Ad Free)</h1>
+      <span class="header-status">you@example.com · Blue Van</span>
+    </header>
+    <nav class="nav" id="nav"></nav>
+    <main class="content">
+      <section class="shot" id="live">
+        <div class="live-toolbar">
+          <h2>Live</h2>
+          <span class="live-updated">Updated 09:41</span>
+          <button class="live-btn" type="button">Refresh</button>
+        </div>
+        <div class="live-layout">
+          <aside class="dev-sidebar">
+            <button class="dev-card dev-card-selected" type="button">
+              <div class="dev-card-top">
+                <span class="dev-name">Blue Van</span>
+                <span class="dev-card-badges"><span class="dev-badge dev-badge-online">Online</span></span>
+              </div>
+              <div class="dev-meta">Last fix: 2m ago · GPS</div>
+              <div class="dev-bars">
+                <div class="dev-bar-row">
+                  <span>Battery</span>
+                  <div class="dev-bar-track"><div class="dev-bar-fill dev-bar-fill-good" style="width:100%"></div></div>
+                  <span class="dev-bar-value">12.6V</span>
+                </div>
+                <div class="dev-bar-row">
+                  <span>Signal</span>
+                  <div class="dev-bar-track"><div class="dev-bar-fill" style="width:82%"></div></div>
+                  <span class="dev-bar-value">82%</span>
+                </div>
+              </div>
+            </button>
+            <button class="dev-card" type="button">
+              <div class="dev-card-top">
+                <span class="dev-name">Red Car</span>
+                <span class="dev-card-badges"><span class="dev-badge dev-badge-sleep">Sleeping</span></span>
+              </div>
+              <div class="dev-meta">Last fix: 3h 10m ago · GPS</div>
+              <div class="dev-bars">
+                <div class="dev-bar-row">
+                  <span>Battery</span>
+                  <div class="dev-bar-track"><div class="dev-bar-fill dev-bar-fill-low" style="width:55%"></div></div>
+                  <span class="dev-bar-value">12.1V</span>
+                </div>
+                <div class="dev-bar-row">
+                  <span>Signal</span>
+                  <div class="dev-bar-track"><div class="dev-bar-fill" style="width:46%"></div></div>
+                  <span class="dev-bar-value">46%</span>
+                </div>
+              </div>
+            </button>
+          </aside>
+          <div id="live-map" class="shot-map"></div>
+        </div>
+      </section>
+
+      <section class="shot history" id="history">
+        <h2>History</h2>
+        <p class="history-device-line"><span class="history-label">Device</span> Blue Van</p>
+        <div class="history-stats">
+          <div class="history-stat"><span class="history-stat-value">42.6 mi</span><span class="history-stat-label">Distance</span></div>
+          <div class="history-stat"><span class="history-stat-value">38 mph</span><span class="history-stat-label">Max speed</span></div>
+          <div class="history-stat"><span class="history-stat-value">860</span><span class="history-stat-label">Points</span></div>
+          <div class="history-stat"><span class="history-stat-value">6h 12m</span><span class="history-stat-label">Duration</span></div>
+        </div>
+        <ul class="history-days">
+          <li><span>28/09/2026</span><span>8.2 mi</span></li>
+          <li><span>29/09/2026</span><span>11.4 mi</span></li>
+          <li><span>02/10/2026</span><span>6.1 mi</span></li>
+          <li><span>04/10/2026</span><span>9.7 mi</span></li>
+          <li><span>05/10/2026</span><span>7.2 mi</span></li>
+        </ul>
+        <div class="history-map-wrap"><div id="history-map" class="history-map"></div></div>
+        <div class="history-legend">
+          <span class="history-legend-item"><i style="background:#22c55e"></i> &lt;19 mph</span>
+          <span class="history-legend-item"><i style="background:#f59e0b"></i> 19–37 mph</span>
+          <span class="history-legend-item"><i style="background:#ef4444"></i> &gt;37 mph</span>
+        </div>
+        <div class="history-range">
+          <label class="history-field"><span class="history-label">From</span><span class="history-date"><span class="history-date-face">28/09/2026</span></span></label>
+          <label class="history-field"><span class="history-label">To</span><span class="history-date"><span class="history-date-face">05/10/2026</span></span></label>
+          <button class="history-btn history-btn-primary" type="button">Load track</button>
+        </div>
+      </section>
+
+      <section class="shot" id="device">
+        <h2>Device</h2>
+        <p class="readonly-note">Read-only view: this client never sends device commands or config changes.</p>
+        <section class="card">
+          <h3 class="card-title">Identity</h3>
+          <div class="field-grid">
+            <div class="field"><span class="field-label">Name</span><span class="field-value">Blue Van</span></div>
+            <div class="field"><span class="field-label">IMEI</span><span class="field-value">100000000000001</span></div>
+            <div class="field"><span class="field-label">ICCID</span><span class="field-value">8900000000000000001</span></div>
+            <div class="field"><span class="field-label">Firmware</span><span class="field-value">1.2.0</span></div>
+          </div>
+        </section>
+        <section class="card">
+          <h3 class="card-title">Status</h3>
+          <div class="field-grid">
+            <div class="field"><span class="field-label">Link state</span><span class="field-value">Online</span></div>
+            <div class="field"><span class="field-label">Battery</span><span class="field-value">12.6V · 100%</span><span class="field-sub">12.6V, a full resting battery</span></div>
+            <div class="field"><span class="field-label">Signal strength</span><span class="field-value">82%</span></div>
+            <div class="field"><span class="field-label">External voltage</span><span class="field-value">12.6V</span></div>
+          </div>
+        </section>
+      </section>
+
+      <section class="shot" id="settings">
+        <h2>Settings</h2>
+        <section class="card">
+          <h3 class="card-title">Account</h3>
+          <dl class="kv">
+            <dt>Account</dt><dd>you@example.com</dd>
+            <dt>Session (sid)</dt><dd class="mono">Ab12cd…wxyz</dd>
+            <dt>Family id</dt><dd class="mono">Ef34gh…stuv</dd>
+            <dt>Signed in</dt><dd>05/10/2026 09:12:00</dd>
+          </dl>
+          <div class="row" style="margin-top: var(--sp-md)">
+            <button class="btn btn-quiet" type="button">Log out</button>
+            <span class="muted">Signs out locally — the vendor session is left to expire.</span>
+          </div>
+        </section>
+        <section class="card">
+          <h3 class="card-title">Read-only safety</h3>
+          <p>This client is strictly read-only: it never sends device commands, config changes or account mutations.</p>
+        </section>
+      </section>
+    </main>
+  </div>
+  <script src="../../node_modules/leaflet/dist/leaflet.js"></script>
+  <script>
+    const tabs = [
+      ['live', '📍', 'Live'],
+      ['history', '🗓️', 'History'],
+      ['device', '📱', 'Device'],
+      ['settings', '⚙️', 'Settings'],
+    ];
+    const nav = document.getElementById('nav');
+    function show(name) {
+      document.querySelectorAll('.shot').forEach((el) => el.classList.toggle('on', el.id === name));
+      nav.innerHTML = tabs.map(([id, emoji, label]) =>
+        `<a class="nav-link${id === name ? ' nav-link-active' : ''}" href="#${id}"><span class="nav-emoji">${emoji}</span><span class="nav-label">${label}</span></a>`
+      ).join('');
+      requestAnimationFrame(() => {
+        if (name === 'live' && window.live) live.invalidateSize();
+        if (name === 'history' && window.hist) {
+          hist.invalidateSize();
+          hist.setView([51.505, -0.09], 13);
+        }
+      });
+    }
+    const route = ['live', 'history', 'device', 'settings'].includes(location.hash.slice(1))
+      ? location.hash.slice(1) : 'live';
+    show(route);
+    addEventListener('hashchange', () => show(location.hash.slice(1) || 'live'));
+
+    const live = L.map('live-map', { zoomControl: true, attributionControl: false }).setView([51.5055, -0.087], 14);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(live);
+    L.circleMarker([51.5055, -0.087], { radius: 8, color: '#38bdf8', fillColor: '#38bdf8', fillOpacity: 0.9 }).addTo(live);
+
+    const hist = L.map('history-map', { zoomControl: false, attributionControl: false }).setView([51.505, -0.09], 13);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(hist);
+    L.polyline([
+      [51.509, -0.105], [51.507, -0.099], [51.505, -0.092], [51.503, -0.086], [51.501, -0.08],
+    ], { color: '#22c55e', weight: 4 }).addTo(hist);
+  </script>
+</body>
+</html>

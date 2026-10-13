@@ -1,0 +1,33 @@
+Third-party notices for qxgps-pwa
+=================================
+
+This project is licensed under the MIT License (see LICENSE).
+
+Runtime dependencies
+--------------------
+
+- leaflet 1.9.4 — BSD 2-Clause License
+  https://github.com/Leaflet/Leaflet/blob/main/LICENSE
+
+- preact 10.25.4 — MIT License
+  https://github.com/preactjs/preact/blob/main/LICENSE
+
+Build / development dependencies (not shipped in the PWA bundle)
+--------------------------------------------------------------
+
+- vite, vite-plugin-pwa, typescript, vitest, eslint, typescript-eslint,
+  @eslint/js, globals, @types/leaflet — see each package on npm for licence text.
+
+Map tiles
+---------
+
+The Live and History screens fetch raster map tiles from OpenStreetMap
+contributors (ODbL). Tile usage is subject to the OSM tile usage policy:
+https://operations.osmfoundation.org/policies/tiles/
+
+Vendor platform
+---------------
+
+API calls may reach the third-party QXGPS / gps666 cloud when you sign in with
+your own account. That service is not part of this repository and is governed by
+the vendor's terms.

@@ -1,0 +1,42 @@
+/*
+ * Login screen: centred card layout + the sign-in notice banner. Everything
+ * else reuses the shared primitives from src/styles.css (.card, .field,
+ * .input, .check, .btn, .error-text) — this file is login-specific only.
+ */
+
+.login-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: var(--sp-lg);
+  background: var(--bg);
+}
+
+.login-card {
+  width: 100%;
+  max-width: 23rem;
+}
+
+.login-title {
+  margin: 0;
+  font-size: 1.35rem;
+  letter-spacing: 0.01em;
+  text-align: center;
+}
+
+.login-form {
+  margin-top: var(--sp-md);
+}
+
+/* Session-expiry notice shown above the form after an automatic sign-out. */
+.login-notice {
+  margin: var(--sp-md) 0 0;
+  padding: var(--sp-sm) var(--sp-md);
+  border: 1px solid var(--warn);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--warn) 12%, transparent);
+  color: var(--text);
+  font-size: 0.85rem;
+}

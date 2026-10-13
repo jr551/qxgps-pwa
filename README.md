@@ -1,3 +1,117 @@
-# New project
+# qxgps-pwa
 
-This project was created by a Cursor cloud agent.
+An ad-free, installable **progressive web app** for viewing GPS trackers that use
+the QXGPS / QXHL vendor cloud — a read-only alternative to the stock mobile app
+(`com.flu.qxhlgg`).
+
+Screenshots use **fictional vehicles** and **sample London-area map coordinates**
+(`you@example.com`). They are not a real account.
+
+| Live | History |
+| --- | --- |
+| ![Live](docs/screenshots/live.png) | ![History](docs/screenshots/history.png) |
+
+| Device | Settings |
+| --- | --- |
+| ![Device](docs/screenshots/device.png) | ![Settings](docs/screenshots/settings.png) |
+
+## Disclaimer
+
+This project is **unofficial** and **not affiliated with, endorsed by, or sponsored
+by** the device manufacturer or platform operator. “QXGPS” and related names are
+trademarks of their respective owners.
+
+Software is provided **as is**, without warranty. It exists for **interoperability**
+with hardware and accounts **you own or are authorised to use**. Reverse-engineering
+notes in this repo describe protocol behaviour for interoperability research only —
+**no vendor firmware, proprietary binaries, copied vendor code, or authentication
+keys** are included.
+
+You must comply with applicable **privacy and location-tracking laws** (including
+obtaining consent before tracking people). See [PRIVACY.md](PRIVACY.md).
+
+## Features
+
+- Live map with device list and status polling
+- History track with speed-coloured polyline and playback
+- Per-day mileage calendar (`QueryTrackDate`) with quick date selection
+- Device detail and read-only configuration display
+- Alarm list and optional browser notifications for new alarms
+- Installable PWA with offline app shell and cached map tiles
+- **Strictly read-only** toward the vendor API (login + `Get*` / `Query*` only)
+
+## Quick start
+
+Requires **Node 18+** (22 recommended).
+
+```bash
+npm install
+npm run dev          # http://127.0.0.1:5173 (Vite default)
+```
+
+Sign in with the same email/password as the vendor app (QXHL / type 58 white-label).
+
+```bash
+npm run typecheck
+npm test
+npm run lint
+npm run build
+npm run preview      # static preview of dist/
+```
+
+### Self-hosted production
+
+**Option A — static hosting (recommended):** deploy `dist/` to any HTTPS host. The
+browser calls `https://www.gps666.net/mapi` directly (the vendor endpoint allows CORS).
+
+**Option B — bundled relay:** serve the build and proxy vendor HTTP from the same
+origin (useful if you serve over HTTP or need Dart-style request fingerprints):
+
+```bash
+npm run build
+npm run relay        # http://127.0.0.1:8787 — serves dist/ + /mapi, /rvsgeo
+```
+
+Relay environment variables:
+
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| `PORT` | `8787` | Listen port |
+| `HOST` | `127.0.0.1` | Bind address |
+| `STATIC_DIR` | `<repo>/dist` | Built PWA files |
+| `MAPI_UPSTREAM` | `http://app.gps666.net` | Vendor mapi |
+| `RVSGEO_UPSTREAM` | `http://rvsgeo.gps666.net` | Reverse geocoding |
+
+## How it works
+
+```
+┌─────────────────┐   HTTPS fetch (CORS)     ┌──────────────────────┐
+│ PWA (Preact +   │ ───────────────────────► │ www.gps666.net/mapi  │
+│ Vite + Leaflet) │ ◄─────────────────────── │ (vendor cloud)         │
+└─────────────────┘                          └──────────────────────┘
+
+Optional self-host:
+┌─────────────────┐   same-origin /mapi      ┌──────────────────────┐   HTTP    ┌─────────────┐
+│ PWA             │ ───────────────────────► │ server/relay.mjs     │ ────────► │ app.gps666… │
+└─────────────────┘                          └──────────────────────┘           └─────────────┘
+```
+
+Login sends `user.Login` with MD5 password hash (`pwd_md5`) and merchant `type: 58`.
+Session `sid` is appended as `?sid=` on subsequent calls. Protocol details:
+[docs/protocol-notes.md](docs/protocol-notes.md).
+
+The service worker precaches the app shell and caches OpenStreetMap tiles. **`/mapi`
+is never cached** — positions are always fetched live.
+
+## Browser support
+
+Modern Chromium, Firefox, and Safari with service worker and `fetch` support.
+Install prompts appear when the PWA criteria are met (HTTPS, manifest, icons).
+
+## Licence
+
+[MIT](LICENSE) — see [THIRD_PARTY_NOTICES](THIRD_PARTY_NOTICES) for dependencies.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md).

@@ -1,0 +1,144 @@
+/* Alarms list — used inside Settings. */
+
+.alarms-card {
+  grid-column: 1 / -1;
+}
+
+.readonly-note {
+  margin: 0 0 0.75rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.state-error {
+  padding: 1.25rem;
+  border: 1px solid #7f1d1d;
+  border-radius: 0.5rem;
+  background: #1c1917;
+}
+
+.state-error p {
+  margin: 0 0 0.75rem;
+  color: #fca5a5;
+}
+
+.retry-button {
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--muted);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.chip {
+  padding: 0.3rem 0.8rem;
+  border: 1px solid var(--muted);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.chip-active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg);
+  font-weight: 600;
+}
+
+.alarm-day {
+  margin-bottom: 1.25rem;
+}
+
+.alarm-day-header {
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.alarm-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.alarm-item {
+  padding: 0.65rem 0.85rem;
+  border: 1px solid #334155;
+  border-radius: 0.5rem;
+  background: var(--surface);
+}
+
+.alarm-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.alarm-type {
+  font-weight: 600;
+}
+
+.alarm-time {
+  font-size: 0.8rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.alarm-text {
+  margin: 0.35rem 0 0;
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
+}
+
+.alarm-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.45rem;
+}
+
+.badge {
+  padding: 0.1rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge-read {
+  background: #14532d;
+  color: #bbf7d0;
+}
+
+.badge-unread {
+  background: #7c2d12;
+  color: #fed7aa;
+}
+
+.badge-unknown {
+  background: #334155;
+  color: var(--muted);
+}
+
+.alarm-photos {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
