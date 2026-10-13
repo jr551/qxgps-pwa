@@ -7,11 +7,12 @@ mod state;
 mod android_host;
 
 use runner::MonitorRunner;
-use state::{MonitorPrefs, MonitorSession, MonitorStore, RuntimeStatus};
+use state::{MonitorSession, MonitorStore};
 use std::sync::{Arc, Mutex, OnceLock};
 use tauri::{AppHandle, Manager, State};
 
-static RUNNER: Mutex<MonitorRunner> = Mutex::new(MonitorRunner::new());
+static RUNNER: std::sync::LazyLock<Mutex<MonitorRunner>> =
+    std::sync::LazyLock::new(|| Mutex::new(MonitorRunner::new()));
 static STORE: OnceLock<Arc<MonitorStore>> = OnceLock::new();
 static APP_HANDLE: OnceLock<AppHandle> = OnceLock::new();
 

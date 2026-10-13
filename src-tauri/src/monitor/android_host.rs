@@ -2,7 +2,7 @@ use super::state::MonitorStore;
 use jni::objects::JValue;
 use jni::JNIEnv;
 use std::sync::Arc;
-use tauri::AppHandle;
+use tauri::{AppHandle, Manager};
 
 fn with_jni<F>(f: F) -> Result<(), String>
 where
@@ -19,7 +19,7 @@ pub fn apply_service(app: &AppHandle, enabled: bool, interval_sec: u64) -> Resul
         .try_state::<Arc<MonitorStore>>()
         .ok_or_else(|| "monitor store missing".to_string())?;
     with_jni(|env| {
-        let activity = ndk_context::android_context().activity();
+        let activity = ndk_context::android_context().context();
         let activity = unsafe { jni::objects::JObject::from_raw(activity as jni::sys::jobject) };
         let class = env
             .find_class("io/github/placeholder/qxgps/MonitorController")
@@ -30,7 +30,7 @@ pub fn apply_service(app: &AppHandle, enabled: bool, interval_sec: u64) -> Resul
             "(Landroid/content/Context;ZJ)V",
             &[
                 JValue::Object(&activity),
-                JValue::Bool(i8::from(enabled)),
+                JValue::Bool(enabled as u8),
                 JValue::Long(interval_sec as i64),
             ],
         )
@@ -42,7 +42,7 @@ pub fn apply_service(app: &AppHandle, enabled: bool, interval_sec: u64) -> Resul
 
 pub fn request_post_notifications(_app: &AppHandle) -> Result<(), String> {
     with_jni(|env| {
-        let activity = ndk_context::android_context().activity();
+        let activity = ndk_context::android_context().context();
         let activity = unsafe { jni::objects::JObject::from_raw(activity as jni::sys::jobject) };
         let class = env
             .find_class("io/github/placeholder/qxgps/MonitorController")
@@ -60,7 +60,7 @@ pub fn request_post_notifications(_app: &AppHandle) -> Result<(), String> {
 
 pub fn open_battery_settings(_app: &AppHandle) -> Result<(), String> {
     with_jni(|env| {
-        let activity = ndk_context::android_context().activity();
+        let activity = ndk_context::android_context().context();
         let activity = unsafe { jni::objects::JObject::from_raw(activity as jni::sys::jobject) };
         let class = env
             .find_class("io/github/placeholder/qxgps/MonitorController")

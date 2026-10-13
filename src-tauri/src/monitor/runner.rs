@@ -137,17 +137,17 @@ fn poll_once(app: &AppHandle, store: &MonitorStore) -> Result<(), String> {
             Err(err) if err.starts_with("session_expired:") => {
                 let login = client.login(&session.account, &session.password)?;
                 sid = login.sid;
-                familyid = login.familyid;
                 client.get_alarms(&sid, &item.simei, start, now, 10)?
             }
             Err(err) => return Err(err),
         };
         let label = item.car_number.clone().unwrap_or_else(|| "QXGPS Lite".to_string());
+        let primed_flag = persisted.alarm_primed;
         let (alarm_events, primed) = collect_new_alarms(
             &mut persisted.seen_alarms,
             &alarms,
             &label,
-            persisted.alarm_primed,
+            primed_flag,
         );
         persisted.alarm_primed = primed;
         for event in alarm_events {

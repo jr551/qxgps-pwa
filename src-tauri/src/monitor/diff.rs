@@ -111,7 +111,7 @@ pub fn collect_new_alarms(
         if seen.contains(&id) {
             continue;
         }
-        seen.insert(id);
+        seen.insert(id.clone());
         if next_primed {
             let title = row
                 .car_number
