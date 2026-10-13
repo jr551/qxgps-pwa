@@ -20,7 +20,7 @@ Passwords are stored only if you sign in successfully; they are **never** writte
 to this repository. Clearing site data or using **Log out** removes session and
 stored credentials from the browser.
 
-## Native background monitoring (Tauri Android / desktop)
+## Native background monitoring (Android APK)
 
 When you turn on **Background monitoring** in Settings (Tauri builds only):
 
@@ -35,7 +35,6 @@ When you turn on **Background monitoring** in Settings (Tauri builds only):
   `POST_NOTIFICATIONS` (alert you locally), `FOGROUND_SERVICE*` / `WAKE_LOCK` (keep
   read-only polling scheduled — no location/GPS permission is requested; the phone’s
   GPS is not used).
-- **Desktop** keeps a tray icon and polls in a background Rust task while enabled.
 - Credentials and session used for polling are stored **on device** (same login
   storage as the PWA plus the native monitor store). Disable monitoring or log out
   to stop background polls.

@@ -345,7 +345,7 @@ export function SettingsScreen() {
               Polls <span class="mono">family.GetRunInfo</span> and{' '}
               <span class="mono">alarm.Get</span> on an interval while you are signed in — same
               read-only calls as the Live screen and in-tab alarm alerts. No Firebase or Play
-              Services.
+              Services. (Android APK only — not the browser PWA.)
             </p>
             <label class="row" style="align-items: center; gap: 0.5rem">
               <input

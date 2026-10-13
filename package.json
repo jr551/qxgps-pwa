@@ -11,7 +11,6 @@
     "tauri": "tauri",
     "build:android": "tauri android build --ci --apk",
     "build:android:debug": "tauri android build --ci --apk --debug",
-    "build:desktop": "tauri build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",

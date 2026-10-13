@@ -1,0 +1,154 @@
+# Version tags (v*): PWA static build (GitHub Pages + zipped dist) and Android APK.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: release-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  pwa:
+    name: PWA (static dist)
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ea9d6a5cfce4a8a4b0c0c # v4.2.2
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck && npm test && npm run lint && npm run build
+      - name: Zip dist for GitHub Release
+        run: (cd dist && zip -r "../qxgps-pwa-${GITHUB_REF_NAME}-dist.zip" .)
+      - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4.6.0
+        with:
+          name: pwa-dist
+          path: dist
+          if-no-files-found: error
+      - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4.6.0
+        with:
+          name: pwa-zip
+          path: qxgps-pwa-*-dist.zip
+          if-no-files-found: error
+
+  android:
+    name: Android APK
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ea9d6a5cfce4a8a4b0c0c # v4.2.2
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22'
+          cache: npm
+      - uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9 # v4.8.0
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: dtolnay/rust-toolchain@1.90.0
+        with:
+          targets: >-
+            aarch64-linux-android,
+            armv7-linux-androideabi,
+            i686-linux-android,
+            x86_64-linux-android
+      - uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407 # v3.2.2
+      - name: Install Android NDK and platform
+        run: sdkmanager "ndk;27.2.12479018" "platforms;android-34"
+      - uses: gradle/actions/setup-gradle@0bdd871935719febd78681f197cd39af5b6e16a6 # v4.2.2
+        with:
+          gradle-version: wrapper
+          build-root-directory: src-tauri/gen/android
+      - uses: swatinem/rust-cache@400e7407cfd7a091e5fbb6afec01ec146c432b7c # v2.7.7
+        with:
+          workspaces: src-tauri
+      - run: npm ci
+      - name: Build release APK (unsigned)
+        run: npm run build:android
+        env:
+          NDK_HOME: ${{ env.ANDROID_NDK_HOME }}
+          ANDROID_HOME: ${{ env.ANDROID_SDK_ROOT }}
+      - name: Sign release APK (optional)
+        if: vars.ANDROID_SIGN_APK == 'true'
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          if [ -z "$ANDROID_KEYSTORE_BASE64" ]; then
+            echo "ANDROID_SIGN_APK is true but ANDROID_KEYSTORE_BASE64 is not set."
+            exit 1
+          fi
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > /tmp/release.keystore
+          BUILD_TOOLS=$(ls -d "$ANDROID_HOME/build-tools"/* | sort -V | tail -1)
+          UNSIGNED=src-tauri/gen/android/app/build/outputs/apk/universal/release/app-universal-release-unsigned.apk
+          "$BUILD_TOOLS/apksigner" sign \
+            --ks /tmp/release.keystore \
+            --ks-pass "pass:$ANDROID_KEYSTORE_PASSWORD" \
+            --ks-key-alias "$ANDROID_KEY_ALIAS" \
+            --key-pass "pass:$ANDROID_KEY_PASSWORD" \
+            --out src-tauri/gen/android/app/build/outputs/apk/universal/release/app-universal-release-signed.apk \
+            "$UNSIGNED"
+      - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4.6.0
+        with:
+          name: android-apks
+          path: |
+            src-tauri/gen/android/app/build/outputs/apk/universal/release/*.apk
+          if-no-files-found: error
+
+  github-pages:
+    name: Deploy PWA to GitHub Pages
+    needs: pwa
+    runs-on: ubuntu-22.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
+        with:
+          name: pwa-dist
+          path: dist
+      - uses: actions/configure-pages@98333b0a9954a1b69f1c7937254e95c3e4b0afe # v5.0.0
+      - uses: actions/upload-pages-artifact@56c81fc0f3716f7bb0ddb819d4c632831e81f685 # v3.0.1
+        with:
+          path: dist
+      - uses: actions/deploy-pages@d6db90164ac5ed7f4b8523e7ab6965d2a4a15e3 # v4.0.5
+        id: deploy
+
+  github-release:
+    name: Attach artifacts to GitHub Release
+    needs: [pwa, android]
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
+        with:
+          name: pwa-zip
+          path: release-files
+      - uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
+        with:
+          name: android-apks
+          path: release-files
+      - uses: softprops/action-gh-release@c95fe1489396fe8a9eb87c0abf8aa5b2ef267fda # v2.2.1
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: QXGPS Lite ${{ github.ref_name }}
+          body: |
+            ## PWA
+            Unzip `qxgps-pwa-*-dist.zip` to any HTTPS static host, or use the GitHub Pages site
+            deployed from this tag.
+
+            ## Android
+            Install the unsigned release APK (F-Droid builds from source and signs separately).
+            For background monitoring and local notifications, use the APK — not the browser tab alone.
+
+            See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md).
+          draft: true
+          files: release-files/**/*

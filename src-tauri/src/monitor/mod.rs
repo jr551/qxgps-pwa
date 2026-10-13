@@ -87,17 +87,10 @@ pub fn monitor_apply_prefs(
     }
 
     if payload.enabled {
-        #[cfg(not(target_os = "android"))]
-        {
-            let mut runner = RUNNER.lock().unwrap();
-            runner.start(app.clone(), store_state.inner().clone());
-        }
+        let mut runner = RUNNER.lock().unwrap();
+        runner.start(app.clone(), store_state.inner().clone());
         #[cfg(target_os = "android")]
-        {
-            let mut runner = RUNNER.lock().unwrap();
-            runner.start(app.clone(), store_state.inner().clone());
-            android_host::apply_service(&app, true, interval)?;
-        }
+        android_host::apply_service(&app, true, interval)?;
     } else {
         let mut runner = RUNNER.lock().unwrap();
         runner.stop();

@@ -1,8 +1,20 @@
 # qxgps-pwa
 
-An ad-free, installable **progressive web app** for viewing GPS trackers that use
-the QXGPS / QXHL vendor cloud — a read-only alternative to the stock mobile app
-(`com.flu.qxhlgg`).
+An ad-free client for viewing GPS trackers on the QXGPS / QXHL vendor cloud — a
+read-only alternative to the stock mobile app (`com.flu.qxhlgg`).
+
+## Two release targets
+
+| Target | What you get | Best for |
+| --- | --- | --- |
+| **PWA** | Static `dist/` (any HTTPS host; [GitHub Pages](https://pages.github.com/) on each version tag) | Phones, tablets, and desktops with a modern browser — install from the browser, offline app shell, in-tab alarm alerts while open |
+| **Android APK** | Tauri v2 build (F-Droid-ready) | **Native background monitoring** — foreground-service polling, local notifications for alarms/link-state changes, no Firebase / Play Services |
+
+Tagged releases (`v*`) publish **both**: a zipped PWA (`qxgps-pwa-<tag>-dist.zip`) and an
+unsigned release APK. See [.github/workflows/release.yml](.github/workflows/release.yml).
+
+Use the **PWA** when a browser is enough. Use the **APK** when you want background
+checks similar to the vendor app’s native behaviour (still read-only toward the API).
 
 Screenshots use **fictional vehicles** and **sample London-area map coordinates**
 (`you@example.com`). They are not a real account.
@@ -38,6 +50,7 @@ obtaining consent before tracking people). See [PRIVACY.md](PRIVACY.md).
 - Device detail and read-only configuration display
 - Alarm list and optional browser notifications for new alarms
 - Installable PWA with offline app shell and cached map tiles
+- Android APK with optional background device checks and local notifications (Tauri)
 - **Strictly read-only** toward the vendor API (login + `Get*` / `Query*` only)
 
 ## Quick start
@@ -119,9 +132,9 @@ analytics SDKs.
 - **Versioning:** `bundle.android.versionCode` in `tauri.conf.json` (0.2.0 → **200**).
 - **Build:** [docs/android-tauri.md](docs/android-tauri.md) — `npm run build:android`
   (unsigned release APK) and `npm run build:android:debug`.
-- **CI:** [.github/workflows/tauri.yml](.github/workflows/tauri.yml) builds APK
-  artifacts on every PR; version tags also produce draft GitHub Releases (desktop
-  via `tauri-action`, Android APKs attached).
+- **CI:** [.github/workflows/tauri.yml](.github/workflows/tauri.yml) validates APK
+  builds on pull requests; [.github/workflows/release.yml](.github/workflows/release.yml)
+  publishes the PWA (Pages + zip) and APK on version tags.
 - **Store metadata:** `fastlane/metadata/android/en-US/`
 - **Draft F-Droid recipe:** [docs/fdroid/io.github.placeholder.qxgps.yml](docs/fdroid/io.github.placeholder.qxgps.yml)
 

@@ -1,5 +1,5 @@
 /**
- * Tauri native background monitor bridge (Android FGS / desktop tray task).
+ * Tauri native background monitor bridge (Android APK).
  * No-op in the browser PWA.
  */
 

@@ -53,18 +53,16 @@ your own `apksigner` step.
 
 ## Why Tauri instead of a hand-rolled WebView?
 
-Tauri meets F-Droid’s “build from source” requirement, stays FOSS, and gives one
-toolchain for Android plus optional desktop targets. The hand-rolled WebView
-shell was removed in favour of this maintained path.
+Tauri meets F-Droid’s “build from source” requirement, stays FOSS, and ships the
+Android APK release target alongside the static PWA. The hand-rolled WebView shell
+was removed in favour of this maintained path.
 
 ## GitHub Actions
 
-Workflow: `.github/workflows/tauri.yml`
-
-| Trigger | Android | Desktop |
+| Workflow | Trigger | Output |
 | --- | --- | --- |
-| Pull request | Unsigned release + debug APK artifacts | — |
-| Tag `v*` | APK artifacts + attached to draft release | Linux / Windows / macOS via `tauri-action` |
+| `.github/workflows/tauri.yml` | Pull request | Unsigned release + debug APK artifacts |
+| `.github/workflows/release.yml` | Tag `v*` | PWA zip + GitHub Pages deploy + draft Release with APK |
 
 Pinned toolchains match this document (Rust **1.90.0**, NDK **27.2.12479018**, Node **22**, JDK **17**).
 
