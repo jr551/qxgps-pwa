@@ -7,7 +7,7 @@ read-only alternative to the stock mobile app (`com.flu.qxhlgg`).
 
 | Target | What you get | Best for |
 | --- | --- | --- |
-| **PWA** | Static `dist/` (any HTTPS host; [GitHub Pages](https://pages.github.com/) on each version tag) | Phones, tablets, and desktops with a modern browser — install from the browser, offline app shell, in-tab alarm alerts while open |
+| **PWA** | Static `dist/` (any HTTPS host; live on [GitHub Pages](https://jr551.github.io/qxgps-pwa/) from each version tag) | Phones, tablets, and desktops with a modern browser — install from the browser, offline app shell, in-tab alarm alerts while open |
 | **Android APK** | Tauri v2 build (F-Droid-ready) | **Native background monitoring** — foreground-service polling, local notifications for alarms/link-state changes, no Firebase / Play Services |
 
 Tagged releases (`v*`) publish **both**: a zipped PWA (`qxgps-pwa-<tag>-dist.zip`) and an
