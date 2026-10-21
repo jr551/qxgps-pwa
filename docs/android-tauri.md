@@ -62,7 +62,7 @@ was removed in favour of this maintained path.
 | Workflow | Trigger | Output |
 | --- | --- | --- |
 | `.github/workflows/tauri.yml` | Pull request | Unsigned release + debug APK artifacts |
-| `.github/workflows/release.yml` | Tag `v*` | PWA zip + GitHub Pages deploy + draft Release with APK |
+| `.github/workflows/release.yml` | Tag `v*` | PWA zip + GitHub Pages deploy + published Release with APK |
 
 Pinned toolchains match this document (Rust **1.90.0**, NDK **27.2.12479018**, Node **22**, JDK **17**).
 
