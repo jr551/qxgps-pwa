@@ -2,7 +2,7 @@
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "QXGPS Lite",
   "version": "0.2.0",
-  "identifier": "io.github.placeholder.qxgps",
+  "identifier": "io.github.jr551.qxgps",
   "build": {
     "frontendDist": "../dist",
     "devUrl": "http://127.0.0.1:5173",

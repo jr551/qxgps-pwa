@@ -22,7 +22,7 @@ pub fn apply_service(app: &AppHandle, enabled: bool, interval_sec: u64) -> Resul
         let activity = ndk_context::android_context().context();
         let activity = unsafe { jni::objects::JObject::from_raw(activity as jni::sys::jobject) };
         let class = env
-            .find_class("io/github/placeholder/qxgps/MonitorController")
+            .find_class("io/github/jr551/qxgps/MonitorController")
             .map_err(|e| e.to_string())?;
         env.call_static_method(
             class,
@@ -45,7 +45,7 @@ pub fn request_post_notifications(_app: &AppHandle) -> Result<(), String> {
         let activity = ndk_context::android_context().context();
         let activity = unsafe { jni::objects::JObject::from_raw(activity as jni::sys::jobject) };
         let class = env
-            .find_class("io/github/placeholder/qxgps/MonitorController")
+            .find_class("io/github/jr551/qxgps/MonitorController")
             .map_err(|e| e.to_string())?;
         env.call_static_method(
             class,
@@ -63,7 +63,7 @@ pub fn open_battery_settings(_app: &AppHandle) -> Result<(), String> {
         let activity = ndk_context::android_context().context();
         let activity = unsafe { jni::objects::JObject::from_raw(activity as jni::sys::jobject) };
         let class = env
-            .find_class("io/github/placeholder/qxgps/MonitorController")
+            .find_class("io/github/jr551/qxgps/MonitorController")
             .map_err(|e| e.to_string())?;
         env.call_static_method(
             class,
