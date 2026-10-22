@@ -104,6 +104,11 @@ export function startAlarmAlerts(): () => void {
       for (const event of deviceEvents) {
         fresh.push({ id: event.id, title: event.title, body: event.body });
       }
+      // The first pass seeds `seen` for EVERY device — alarmPrimed is a
+      // per-poll flag: only alarms first observed on a later poll notify.
+      // Snapshot it so device #1's seed pass does not unblock notifications
+      // for alarms that pre-existed on the other devices.
+      const seeded = alarmPrimed;
       for (const item of items) {
         const alarms = await getAlarms(item.simei, {
           limit: 10,
@@ -120,13 +125,13 @@ export function startAlarmAlerts(): () => void {
             car_number: a.car_number,
           })),
           item.car_number || 'QXGPS Lite',
-          alarmPrimed,
+          seeded,
         );
-        alarmPrimed = collected.primed;
         for (const event of collected.events) {
           fresh.push({ id: event.id, title: event.title, body: event.body });
         }
       }
+      alarmPrimed = true;
       saveSeen(seen);
       for (const note of fresh.slice(0, 4)) {
         new Notification(note.title, { body: note.body, icon: `${import.meta.env.BASE_URL}icon-192.png`, tag: note.id });

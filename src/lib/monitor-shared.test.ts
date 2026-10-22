@@ -65,4 +65,65 @@ describe('monitor-shared', () => {
     expect(primed).toBe(true);
     expect(seen.size).toBe(1);
   });
+
+  it('treats the vendor power sentinel (-1) as unknown, never low', () => {
+    const simei = 'abc';
+    const snap = deviceSnapshotFromRunInfoItem({
+      simei,
+      car_number: 'Van',
+      state: 'e_line_on',
+      power: -1,
+      last_com_time: 1,
+    });
+    expect(snap.power).toBeNull();
+
+    // A real low reading followed by the -1 sentinel must NOT raise a
+    // low_battery event: -1 means the device stopped reporting charge.
+    const prev = new Map([
+      [
+        simei,
+        deviceSnapshotFromRunInfoItem({
+          simei,
+          car_number: 'Van',
+          state: 'e_line_on',
+          power: 12,
+          last_com_time: 1,
+        }),
+      ],
+    ]);
+    const { events } = diffDeviceSnapshots(prev, [snap], true);
+    expect(events.filter((e) => e.kind === 'low_battery')).toHaveLength(0);
+  });
+
+  it('stays silent for every caller that passes the pre-poll seed state', () => {
+    const seen = new Set<string>();
+    // Multi-device first pass: the caller keeps one primed flag per pass.
+    // Both devices' stale rows are seeds; nothing notifies.
+    const passPrimed = false;
+    const first = collectNewAlarmNotifications(
+      seen,
+      [{ imei: 1, time: 2, type: 'e_alarm_sos', alarm_name: 'SOS' }],
+      'Car1',
+      passPrimed,
+    );
+    const second = collectNewAlarmNotifications(
+      seen,
+      [{ imei: 2, time: 3, type: 'e_alarm_shake', alarm_name: 'Shake' }],
+      'Car2',
+      passPrimed,
+    );
+    expect(first.events).toHaveLength(0);
+    expect(second.events).toHaveLength(0);
+    expect(seen.size).toBe(2);
+
+    // A row arriving after the seed pass still notifies.
+    const third = collectNewAlarmNotifications(
+      seen,
+      [{ imei: 2, time: 4, type: 'e_alarm_sos', alarm_name: 'SOS' }],
+      'Car2',
+      true,
+    );
+    expect(third.events).toHaveLength(1);
+    expect(third.events[0].title).toBe('Car2');
+  });
 });
