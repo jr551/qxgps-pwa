@@ -49,14 +49,24 @@ import { clearSession, getState, SESSION_EXPIRED_NOTICE, setSession } from '../s
 import { md5 } from '../lib/md5';
 
 /**
- * Vendor mapi, called directly from the browser.
+ * Vendor mapi endpoint.
  *
- * https://www.gps666.net/mapi is the official web portal's endpoint. It answers
- * HTTPS with `Access-Control-Allow-Origin: *` and allows `Content-Type` on
- * preflight, so a page can read the JSON without a relay. The browser will
- * attach its own Origin and User-Agent; that is accepted.
+ * Default: https://www.gps666.net/mapi — the official web portal's endpoint.
+ * It answers HTTPS with `Access-Control-Allow-Origin: *` and allows
+ * `Content-Type` on preflight, so a page can read the JSON without a relay.
+ * The browser attaches its own Origin and User-Agent; that is accepted.
+ *
+ * Build-time override: VITE_MAPI_URL. Set it to `/mapi` for the bundled
+ * same-origin relay (server/relay.mjs), which strips the browser headers and
+ * replays the request with the vendor Dart app's exact header set. A relative
+ * URL is safe here: the service-worker's navigation fallback already denies
+ * /^\/mapi/ and /^\/rvsgeo/.
  */
-export const MAPI_URL = 'https://www.gps666.net/mapi';
+const envMapiUrl = import.meta.env?.VITE_MAPI_URL;
+export const MAPI_URL =
+  typeof envMapiUrl === 'string' && envMapiUrl !== ''
+    ? envMapiUrl
+    : 'https://www.gps666.net/mapi';
 
 /** Abort a request that takes longer than this. */
 const RPC_TIMEOUT_MS = 15_000;
