@@ -49,7 +49,7 @@ const SELECT_ZOOM = 15;
 /**
  * `signal_rate` (0-100), `speed_value` and `devspeed` appear in the vendor
  * model table (research docs/protocol-notes.md) but NOT in the verified
- * GetRunInfo item schema (response-schemas.md §2). Read defensively: shown
+ * GetRunInfo item schema (docs/protocol-notes.md). Read defensively: shown
  * when present, "—" when absent. The speed unit is unverified in the
  * research, so it is rendered as a bare number.
  */

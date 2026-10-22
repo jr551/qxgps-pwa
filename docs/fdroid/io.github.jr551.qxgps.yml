@@ -23,9 +23,9 @@ WebSite: https://github.com/jr551/qxgps-pwa
 #   Rust 1.90.0, NDK r27c (27.2.12479018), @tauri-apps/cli 2.12.2, JDK 17
 
 Builds:
-  - versionName: '0.2.0'
-    versionCode: 200
-    commit: v0.2.0
+  - versionName: '0.2.1'
+    versionCode: 201
+    commit: v0.2.1
     subdir: .
     sudo:
       - apt-get update
@@ -38,6 +38,7 @@ Builds:
       - npm ci
       - sdkmanager "ndk;27.2.12479018" "platforms;android-34"
       - export NDK_HOME=$$ANDROID_NDK_HOME$$
+    build:
       - npm run build:android
     output: src-tauri/gen/android/app/build/outputs/apk/universal/release/app-universal-release-unsigned.apk
 

@@ -29,10 +29,10 @@ import {
 
 const DAY_MS = 86_400_000;
 
-/** Vendor UI rule (data-path.md: "The maximum query is within 7 consecutive days"). */
+/** Vendor UI rule (vendor app: "The maximum query is within 7 consecutive days"). */
 const VENDOR_MAX_DAYS = 7;
 const VENDOR_MAX_DAYS_NOTICE = 'The maximum query is within 7 consecutive days';
-/** Vendor UI rule (data-path.md: "The tracking time cannot be longer than 24 hours"). */
+/** Vendor UI rule (vendor app: "The tracking time cannot be longer than 24 hours"). */
 const VENDOR_24H_NOTICE = 'The tracking time cannot be longer than 24 hours';
 
 type Status = 'idle' | 'loading' | 'ready' | 'empty' | 'error';

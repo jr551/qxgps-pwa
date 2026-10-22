@@ -7,10 +7,9 @@
  * setSimCmd, write, command or mark-read call here or anywhere in the tree.
  *
  * Every envelope here is VERIFIED against docs/protocol-notes.md (live
- * session 2026-10-04; §1 login, §3 session, §4 read calls, §5 probe notes)
- * and docs/protocol-notes.md (pcap-decoded payload shapes). All three
- * feature surfaces are resolved on the wire (captured 2026-10-04; verbatim
- * request/response pairs documented in docs/protocol-notes.md):
+ * session 2026-10-04: §1 login, §3 session, §4 read calls, §5 probe notes;
+ * payload shapes from captured request/response pairs). All three feature
+ * surfaces are resolved on the wire:
  * getFences → fence.Get, getTrack → location.QueryLocation, getAlarms →
  * alarm.Get (with `simei` as a one-element array).
  *

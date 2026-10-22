@@ -7,7 +7,7 @@
  *  - fence breach enums e_fence_in / e_fence_out / e_fence_in_out:
  *    protocol notes (grounded).
  *  - state / loc-type enums (e_line_*, e_static_*, e_wifi, e_lbs): the screen
- *    contract + response-schemas.md.
+ *    contract + docs/protocol-notes.md.
  *  - acc_state / acc_power, car_switch keys and e_cmd_* labels are INFERRED
  *    from the vendor key names (no UI capture of those strings exists yet).
  *    Screens always render the raw enum value next to the label so nothing is
@@ -188,7 +188,7 @@ export const MODE_LABELS: Record<string, string> = {
 
 /**
  * Alarm types: the only wire-captured alarm-type enum spellings so far are the
- * geofence breach types (data-path.md §9). Everything else is matched against
+ * geofence breach types (docs/protocol-notes.md). Everything else is matched against
  * the vendor catalogue by alarmTypeLabel().
  */
 export const ALARM_TYPE_LABELS: Record<string, string> = {

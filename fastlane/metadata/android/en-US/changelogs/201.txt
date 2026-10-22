@@ -1,0 +1,4 @@
+Fix release blockers and session bugs (0.2.1).
+Final application id io.github.jr551.qxgps; safer re-login and device selection;
+fixed false low-battery and stale-alarm notifications; optional same-origin
+mapi relay via VITE_MAPI_URL; native monitor sends the vendor app user-agent.

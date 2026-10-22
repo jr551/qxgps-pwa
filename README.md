@@ -83,11 +83,12 @@ npm run preview      # static preview of dist/
 **Option A — static hosting (recommended):** deploy `dist/` to any HTTPS host. The
 browser calls `https://www.gps666.net/mapi` directly (the vendor endpoint allows CORS).
 
-**Option B — bundled relay:** serve the build and proxy vendor HTTP from the same
-origin (useful if you serve over HTTP or need Dart-style request fingerprints):
+**Option B — bundled relay:** build the PWA against the same-origin `/mapi`
+endpoint and serve it through `server/relay.mjs` (useful over HTTP or when you
+need the vendor Dart app's exact request fingerprint):
 
 ```bash
-npm run build
+VITE_MAPI_URL=/mapi npm run build
 npm run relay        # http://127.0.0.1:8787 — serves dist/ + /mapi, /rvsgeo
 ```
 
@@ -135,7 +136,7 @@ analytics SDKs.
 
 - **Application id:** `io.github.jr551.qxgps` — set in
   `src-tauri/tauri.conf.json` (`identifier`).
-- **Versioning:** `bundle.android.versionCode` in `tauri.conf.json` (0.2.0 → **200**).
+- **Versioning:** `bundle.android.versionCode` in `tauri.conf.json` (0.2.1 → **201**).
 - **Build:** [docs/android-tauri.md](docs/android-tauri.md) — `npm run build:android`
   (unsigned release APK) and `npm run build:android:debug`.
 - **CI:** [.github/workflows/tauri.yml](.github/workflows/tauri.yml) validates APK

@@ -24,8 +24,7 @@ export interface LatLng {
 /**
  * Parse the vendor's WGS84 "lat,lon" decimal string (`last_pos.wgs`).
  * Returns null when missing/malformed, or for the vendor's "0.0,0.0"
- * placeholder (a device that has never located — see the empty-state mock
- * in response-schemas.md).
+ * placeholder (a device that has never located — docs/protocol-notes.md).
  */
 export function parseWgs(wgs: string | null | undefined): LatLng | null {
   if (typeof wgs !== 'string') return null;
@@ -107,7 +106,7 @@ function humanEnum(value: string): string {
 
 /**
  * Device link state → label.
- * Verified values (data-path.md): e_line_on, e_line_sleep, e_line_down.
+ * Verified values (docs/protocol-notes.md): e_line_on, e_line_sleep, e_line_down.
  */
 export function stateLabel(state: string | null | undefined): string {
   switch (state) {
@@ -128,7 +127,7 @@ export function stateLabel(state: string | null | undefined): string {
 
 /**
  * Fix source (`last_pos.type` / `loc_type`) → label.
- * Verified values (response-schemas.md): e_static_gps, e_wifi, e_static_wifi,
+ * Verified values (docs/protocol-notes.md): e_static_gps, e_wifi, e_static_wifi,
  * e_static_lbs, e_lbs.
  */
 export function typeLabel(locType: string | null | undefined): string {

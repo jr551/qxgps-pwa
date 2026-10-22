@@ -1,10 +1,9 @@
 /**
  * Types for the QXGPS vendor "mapi" JSON API.
  *
- * Every shape below is grounded in
- * docs/protocol-notes.md (summarised from interoperability research; decoded pcap
- * frames 65-1484 of the vendor app com.flu.qxhlgg 6.41.6) and in
- * docs/protocol-notes.md (live-verified envelopes, 2026-10-04). Shapes
+ * Every shape below is grounded in docs/protocol-notes.md — summarised
+ * interoperability research: decoded pcap frames 65-1484 of the vendor app
+ * com.flu.qxhlgg 6.41.6 plus live-verified envelopes (2026-10-04). Shapes
  * captured by the 2026-10-04 bounded live probe are marked
  * `LIVE PROBE 2026-10-04`. Fields the research has NOT captured are explicitly
  * marked `PENDING: schema not yet verified`.
@@ -433,7 +432,7 @@ export interface DeviceListResponse extends MapiEnvelope {
 
 /**
  * family.GetExpireImei response (docs/protocol-notes.md §4 row 4,
- * VERIFIED; response-schemas.md §10). Params: {"familyid"}.
+ * VERIFIED). Params: {"familyid"}.
  */
 export interface ExpireImeiResponse extends MapiEnvelope {
   h5_domain: string;
@@ -448,7 +447,7 @@ export interface ExpireImeiResponse extends MapiEnvelope {
  */
 export type SimResponse = MapiEnvelope & Record<string, unknown>;
 
-/** `customer_phone` string-JSON of family.GetContact (response-schemas.md §7). */
+/** `customer_phone` string-JSON of family.GetContact (docs/protocol-notes.md §4 row 10). */
 export interface CustomerPhone {
   name: string;
   phone: string;
@@ -457,9 +456,9 @@ export interface CustomerPhone {
 }
 
 /**
- * family.GetContact response (docs/protocol-notes.md §4 row 10, VERIFIED;
- * response-schemas.md §7). `customer_phone` is a string-encoded JSON object —
- * JSON.parse it into CustomerPhone.
+ * family.GetContact response (docs/protocol-notes.md §4 row 10, VERIFIED).
+ * `customer_phone` is a string-encoded JSON object — JSON.parse it into
+ * CustomerPhone.
  */
 export interface ContactResponse extends MapiEnvelope {
   customer_phone: string;

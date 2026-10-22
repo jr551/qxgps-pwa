@@ -1,6 +1,6 @@
 [package]
 name = "qxgps_pwa"
-version = "0.2.0"
+version = "0.2.1"
 description = "Ad-free read-only QXGPS tracker client (Tauri shell)"
 authors = ["qxgps-pwa contributors"]
 license = "MIT"

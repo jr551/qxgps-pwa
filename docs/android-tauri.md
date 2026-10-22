@@ -20,8 +20,8 @@ Services, Firebase, ads, or analytics SDKs.
 
 ## Version codes
 
-`bundle.android.versionCode` in `tauri.conf.json` (currently **200** for app
-version **0.2.0**). Keep monotonic for F-Droid / Play sideloading.
+`bundle.android.versionCode` in `tauri.conf.json` (currently **201** for app
+version **0.2.1**). Keep monotonic for F-Droid / Play sideloading.
 
 ## Local build
 

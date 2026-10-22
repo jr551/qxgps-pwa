@@ -1,6 +1,6 @@
 {
   "name": "qxgps-pwa",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "license": "MIT",
   "type": "module",
   "description": "Ad-free PWA web client for QXGPS GPS trackers (read-only toward the vendor platform).",

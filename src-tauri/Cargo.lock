@@ -2807,7 +2807,7 @@ dependencies = [
 
 [[package]]
 name = "qxgps_pwa"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "jni",
  "md5",
