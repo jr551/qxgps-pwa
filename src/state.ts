@@ -128,10 +128,25 @@ export function setSession(session: Session | null, meta?: SessionMeta | null): 
 /**
  * Drop the session (local only — never a vendor call). An optional notice is
  * shown on the login screen, e.g. SESSION_EXPIRED_NOTICE after a stale sid.
+ * The selected device and remembered names are account-scoped and are dropped
+ * too: the previous account's simei must not leak into the next account's
+ * queries.
  */
 export function clearSession(notice?: string): void {
   saveMeta(null);
-  setState({ session: null, sessionMeta: null, sessionNotice: notice ?? null });
+  try {
+    localStorage.removeItem(SELECTED_KEY);
+    localStorage.removeItem(NAMES_KEY);
+  } catch {
+    // Storage unavailable — the in-memory clear still applies.
+  }
+  setState({
+    session: null,
+    sessionMeta: null,
+    sessionNotice: notice ?? null,
+    selectedSimei: null,
+    deviceNames: {},
+  });
 }
 
 export function setSelectedSimei(simei: string | null): void {
