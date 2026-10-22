@@ -8,10 +8,10 @@ advertising SDKs, or a project-operated backend.
 | Storage | Contents | Purpose |
 | --- | --- | --- |
 | `localStorage` (`qxgps.session`) | Session id, family id, account label | Stay signed in across reloads |
-| `localStorage` (`qxgps.credentials`) | Account email + password (plaintext) | Optional auto sign-in after reload |
+| `localStorage` (`qxgps.credentials`) | Account email + password (plaintext) | Auto sign-in after reload, written on every successful sign-in |
 | `localStorage` (`qxgps.selectedSimei`) | Selected device token | Remember map focus |
 | `localStorage` (`qxgps.deviceNames`) | Friendly device labels | UI convenience |
-| `localStorage` (`qxgps.rememberAccount`) | Remember-me flag + email | Login form |
+| `localStorage` (`qxgps.account`) | Remembered account email | Pre-fill the login form |
 | `localStorage` (`qxgps.backgroundMonitor`) | Native monitor toggle + interval | Tauri shell only |
 | Native app data (`monitor-state.json`) | Last device snapshots + seen alarm ids | Native background monitor |
 | Service worker caches | App shell, icons, offline page, OpenStreetMap tiles | Offline use |

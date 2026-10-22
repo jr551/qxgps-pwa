@@ -33,8 +33,9 @@
  * the upstream answers gzip — the browser never sees a wire-level header
  * mismatch).
  *
- * This rewrite is duplicated identically in vite.config.ts for the dev proxy.
- * If you change one, change the other.
+ * The browser app calls the vendor API directly over HTTPS by default;
+ * this relay is the optional same-origin fallback (VITE_MAPI_URL=/ at build
+ * time, then serve dist/ through this server).
  *
  * SAFETY: relay only; no vendor state is ever modified here. The app itself
  * is strictly read-only toward the vendor platform (Get* and get* calls only).

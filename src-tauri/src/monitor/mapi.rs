@@ -35,7 +35,11 @@ impl MapiClient {
         let res = self
             .http
             .post(url)
+            .header("user-agent", "Dart/3.6 (dart:io)")
             .header("content-type", "application/json; charset=utf-8")
+            // No accept-encoding: reqwest is built without gzip support, so
+            // offering it would return an undecodable body. The Dart UA keeps
+            // the vendor-side fingerprint consistent with the app.
             .json(&json!({ "module": module, "func": func, "params": params }))
             .send()
             .map_err(|e| e.to_string())?;
