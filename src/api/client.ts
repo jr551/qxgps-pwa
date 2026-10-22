@@ -91,11 +91,20 @@ const SESSION_STORAGE_KEY = 'qxgps.session';
  */
 const CREDS_KEY = 'qxgps.credentials';
 
-/** While true, getSession() hides the sid so user.Login is sent with no ?sid=. */
-let omitSid = false;
-
 let reloginPromise: Promise<Session> | null = null;
 
+/** Per-call transport options. */
+interface RpcOptions {
+  /** Internal: set on the single stale-sid retry. */
+  retried?: boolean;
+  /**
+   * false sends the request without ?sid= regardless of the loaded session —
+   * required by user.Login, which must not carry a stale sid. Other callers
+   * are unaffected: unlike the old module-wide omitSid flag, concurrent
+   * requests keep sending the current sid while a login is in flight.
+   */
+  withSession?: boolean;
+}
 /**
  * Transport helper: POST {module, func, params} straight to the vendor HTTPS
  * mapi URL, appending the session as ?sid= when logged in. A normal browser
@@ -103,19 +112,24 @@ let reloginPromise: Promise<Session> | null = null;
  * stale-sid errcode (268697631) it signs in again from this browser's stored
  * login once, then drops the session if that fails.
  *
+ * `params` may be a thunk; it is evaluated per attempt so a stale-sid retry
+ * re-reads rotating credentials (familyid/sfamily) from the fresh session.
+ *
  * The browser sets content-type plus its own Origin, User-Agent and
  * Sec-Fetch-* headers. The vendor HTTPS endpoint allows that (CORS *).
  */
 export async function rpc<T extends MapiEnvelope = MapiEnvelope>(
   module: string,
   func: string,
-  params: Record<string, unknown> = {},
-  retried = false,
+  params: Record<string, unknown> | (() => Record<string, unknown>) = {},
+  opts: RpcOptions = {},
 ): Promise<T> {
-  const session = getSession();
+  const session = opts.withSession === false ? null : getSession();
   const url = session
     ? `${MAPI_URL}?sid=${encodeURIComponent(session.sid)}`
     : MAPI_URL;
+
+  const paramsNow = typeof params === 'function' ? params() : params;
 
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), RPC_TIMEOUT_MS);
@@ -125,7 +139,7 @@ export async function rpc<T extends MapiEnvelope = MapiEnvelope>(
       headers: {
         'content-type': 'application/json; charset=utf-8',
       },
-      body: JSON.stringify({ module, func, params }),
+      body: JSON.stringify({ module, func, params: paramsNow }),
       signal: controller.signal,
     });
     if (!res.ok) {
@@ -141,13 +155,15 @@ export async function rpc<T extends MapiEnvelope = MapiEnvelope>(
     }
     if (envelope.errcode !== 0) {
       const message = String(envelope.error_message ?? '');
-      if (envelope.errcode === ERR_SESSION_EXPIRED) {
+      if (envelope.errcode === ERR_SESSION_EXPIRED && opts.withSession !== false) {
         // Stale sid. If this browser kept the login, sign in again once and
         // retry the read. Otherwise drop the session so the shell shows login.
-        if (!retried && !omitSid && loadCredentials()) {
+        // A withSession:false request carries no sid, so this code is an
+        // ordinary MapiError for it — never a reason to drop the session.
+        if (!opts.retried && loadCredentials()) {
           try {
             await reloginOnce();
-            return rpc(module, func, params, true);
+            return rpc(module, func, params, { retried: true });
           } catch {
             // Stored login failed — fall through and show the login screen.
           }
@@ -324,27 +340,30 @@ export async function restoreLogin(): Promise<boolean> {
  * so a later reload can sign in again. logout() deletes them.
  */
 export async function login(email: string, password: string): Promise<Session> {
-  const at = email.indexOf('@');
+  const trimmedEmail = email.trim();
+  const at = trimmedEmail.indexOf('@');
   const account =
-    at === -1 ? email.toLowerCase() : `${email.slice(0, at).toLowerCase()}@${email.slice(at + 1)}`;
+    at === -1
+      ? trimmedEmail.toLowerCase()
+      : `${trimmedEmail.slice(0, at).toLowerCase()}@${trimmedEmail.slice(at + 1)}`;
   const trimmedPassword = password.trim();
 
-  // Login must not send a stale ?sid= (§1). Hide it for this call without
-  // clearing the UI session, so a silent re-login does not flash the form.
-  omitSid = true;
-  let res: LoginResponse;
-  try {
-    res = await rpc<LoginResponse>('user', 'Login', {
+  // Login must not send a stale ?sid= (§1) — suppressed per call, without
+  // clearing the UI session, so a silent re-login does not flash the form and
+  // concurrent reads keep using the current sid.
+  const res = await rpc<LoginResponse>(
+    'user',
+    'Login',
+    {
       account,
       pwd_md5: md5(trimmedPassword),
       info: '',
       lang: 'en',
       platform: 'web',
       type: MERCHANT_TYPE,
-    });
-  } finally {
-    omitSid = false;
-  }
+    },
+    { withSession: false },
+  );
 
   const session: Session = {
     sid: res.sid,
@@ -357,7 +376,7 @@ export async function login(email: string, password: string): Promise<Session> {
   };
   saveCredentials(account, trimmedPassword);
   storeSession(session);
-  setSession(session, { account: email, loginAt: Date.now() });
+  setSession(session, { account: trimmedEmail, loginAt: Date.now() });
   return session;
 }
 
@@ -368,7 +387,6 @@ export async function login(email: string, password: string): Promise<Session> {
  * logged in before first render.
  */
 export function getSession(): Session | null {
-  if (omitSid) return null;
   const current = getState().session;
   if (current) return current;
   const restored = restoreStoredSession();
@@ -408,36 +426,38 @@ function requireFamilyId(): string {
  * one is rejected with 268697607 Invalid parameter.
  */
 export async function getFamilyList(): Promise<FamilyInfo> {
-  return rpc<FamilyInfo>('family', 'GetFamilyList', {
+  // Params thunk: familyid is re-read on the stale-sid retry so the rotated
+  // post-re-login token is used, not the dead one.
+  return rpc<FamilyInfo>('family', 'GetFamilyList', () => ({
     f_limit_size: 0,
     familyid: requireFamilyId(),
     g_limit_size: 100,
     get_all: true,
     last_fid: '',
     last_gid: '',
-  });
+  }));
 }
 
 /** family.GetExpireImei (§4 row 4). */
 export async function getExpireImei(): Promise<ExpireImeiResponse> {
-  return rpc<ExpireImeiResponse>('family', 'GetExpireImei', {
+  return rpc<ExpireImeiResponse>('family', 'GetExpireImei', () => ({
     familyid: requireFamilyId(),
-  });
+  }));
 }
 
 /** family.GetRunInfo — live polling state (§4 row 5). */
 export async function getRunInfo(): Promise<RunInfoResponse> {
-  return rpc<RunInfoResponse>('family', 'GetRunInfo', {
+  return rpc<RunInfoResponse>('family', 'GetRunInfo', () => ({
     call_all_dev: true,
     call_simei: null,
     limit_size: 200,
     sfamily: requireFamilyId(),
-  });
+  }));
 }
 
 /** family.GetDeviceList (§4 row 6). */
 export async function getDeviceList(): Promise<DeviceListResponse> {
-  return rpc<DeviceListResponse>('family', 'GetDeviceList', {
+  return rpc<DeviceListResponse>('family', 'GetDeviceList', () => ({
     get_increment: true,
     get_total: true,
     familyid: requireFamilyId(),
@@ -445,7 +465,7 @@ export async function getDeviceList(): Promise<DeviceListResponse> {
     limit_size: 20,
     is_get_follow: true,
     state: null,
-  });
+  }));
 }
 
 /** device.GetDetail (§4 row 7). */
