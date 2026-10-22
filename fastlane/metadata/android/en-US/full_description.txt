@@ -10,4 +10,4 @@ This app is strictly read-only toward the vendor platform: it does not send devi
 
 Disclaimer: not affiliated with or endorsed by the device manufacturer. Trademarks belong to their owners. Use only with hardware and accounts you are authorised to access, and comply with local privacy and tracking laws.
 
-The application ID uses a placeholder (io.github.placeholder.qxgps) until the maintainer publishes under their GitHub organisation.
+Application ID: io.github.jr551.qxgps.

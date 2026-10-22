@@ -4,8 +4,8 @@ The Android app is a **Tauri v2** shell around the same Vite/Preact PWA. Tauri
 uses the system **WebView** (via WRY) plus a small Rust runtime — no Google Play
 Services, Firebase, ads, or analytics SDKs.
 
-**Application id (placeholder):** `io.github.placeholder.qxgps` — set the final
-id in `src-tauri/tauri.conf.json` (`identifier`) and re-run `npx tauri android init --ci`.
+**Application id:** `io.github.jr551.qxgps` — configured in
+`src-tauri/tauri.conf.json` (`identifier`).
 
 ## Pinned toolchain (reproducible builds)
 
@@ -48,7 +48,7 @@ your own `apksigner` step.
   contains **no proprietary blobs** in git — native code is compiled from
   `src-tauri/` during the build.
 - **Anti-feature:** `NonFreeNet` (vendor tracker cloud at `*.gps666.net`).
-- **Recipe:** `docs/fdroid/io.github.placeholder.qxgps.yml`
+- **Recipe:** `docs/fdroid/io.github.jr551.qxgps.yml`
 - Generated Gradle project lives under `src-tauri/gen/android/` (committed).
 
 ## Why Tauri instead of a hand-rolled WebView?

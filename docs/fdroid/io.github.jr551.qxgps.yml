@@ -1,13 +1,13 @@
 # Draft F-Droid metadata — Tauri v2 Android build from source.
-# Replace PLACEHOLDER URLs and rename file to match your final application id.
+# Application id is final (io.github.jr551.qxgps) and matches this filename.
 
 Categories:
   - Navigation
 License: MIT
 AuthorName: qxgps-pwa contributors
-SourceCode: https://github.com/PLACEHOLDER/qxgps-pwa
-IssueTracker: https://github.com/PLACEHOLDER/qxgps-pwa/issues
-Changelog: https://github.com/PLACEHOLDER/qxgps-pwa/blob/main/CHANGELOG.md
+SourceCode: https://github.com/jr551/qxgps-pwa
+IssueTracker: https://github.com/jr551/qxgps-pwa/issues
+Changelog: https://github.com/jr551/qxgps-pwa/blob/main/CHANGELOG.md
 
 AutoName: QXGPS Lite
 Summary: Ad-free read-only client for QXGPS GPS trackers you own
@@ -17,7 +17,7 @@ Description: |
 
   Requires your own vendor account. Not affiliated with the device maker.
 
-WebSite: https://github.com/PLACEHOLDER/qxgps-pwa
+WebSite: https://github.com/jr551/qxgps-pwa
 
 # Toolchain pins (see docs/android-tauri.md):
 #   Rust 1.90.0, NDK r27c (27.2.12479018), @tauri-apps/cli 2.12.2, JDK 17
