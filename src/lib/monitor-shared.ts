@@ -44,7 +44,10 @@ export function deviceSnapshotFromRunInfoItem(item: {
     simei: item.simei,
     car_number: item.car_number ?? '',
     state: item.state,
-    power: typeof item.power === 'number' ? item.power : null,
+    // Vendor schema uses -1 as the "unknown" sentinel (`power INTEGER
+    // DEFAULT -1`); a negative reading is no reading, so a device reporting
+    // 12 then -1 must not fire the low-battery event.
+    power: typeof item.power === 'number' && item.power >= 0 ? item.power : null,
     last_com_time: typeof item.last_com_time === 'number' ? item.last_com_time : 0,
     expire: Boolean(item.expire),
   };
