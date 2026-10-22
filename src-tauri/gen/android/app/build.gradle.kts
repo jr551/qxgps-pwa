@@ -15,10 +15,10 @@ val tauriProperties = Properties().apply {
 
 android {
     compileSdk = 34
-    namespace = "io.github.placeholder.qxgps"
+    namespace = "io.github.jr551.qxgps"
     defaultConfig {
         manifestPlaceholders["usesCleartextTraffic"] = "false"
-        applicationId = "io.github.placeholder.qxgps"
+        applicationId = "io.github.jr551.qxgps"
         minSdk = 24
         targetSdk = 34
         versionCode = tauriProperties.getProperty("tauri.android.versionCode", "1").toInt()

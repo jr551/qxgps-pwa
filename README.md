@@ -133,8 +133,8 @@ Install prompts appear when the PWA criteria are met (HTTPS, manifest, icons).
 plus a small Rust runtime). FOSS toolchain — no Play Services, Firebase, ads, or
 analytics SDKs.
 
-- **Application id (placeholder):** `io.github.placeholder.qxgps` — set the final
-  id in `src-tauri/tauri.conf.json` before you publish.
+- **Application id:** `io.github.jr551.qxgps` — set in
+  `src-tauri/tauri.conf.json` (`identifier`).
 - **Versioning:** `bundle.android.versionCode` in `tauri.conf.json` (0.2.0 → **200**).
 - **Build:** [docs/android-tauri.md](docs/android-tauri.md) — `npm run build:android`
   (unsigned release APK) and `npm run build:android:debug`.
@@ -142,7 +142,7 @@ analytics SDKs.
   builds on pull requests; [.github/workflows/release.yml](.github/workflows/release.yml)
   publishes the PWA (Pages + zip) and APK on version tags.
 - **Store metadata:** `fastlane/metadata/android/en-US/`
-- **Draft F-Droid recipe:** [docs/fdroid/io.github.placeholder.qxgps.yml](docs/fdroid/io.github.placeholder.qxgps.yml)
+- **Draft F-Droid recipe:** [docs/fdroid/io.github.jr551.qxgps.yml](docs/fdroid/io.github.jr551.qxgps.yml)
 
 **F-Droid anti-features to declare:** `NonFreeNet` (users connect to the
 proprietary vendor tracker cloud with their own account). The app itself contains

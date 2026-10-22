@@ -164,7 +164,7 @@ pub extern "C" fn qxgps_monitor_poll_native() -> i32 {
 #[cfg(target_os = "android")]
 #[allow(non_snake_case)]
 #[no_mangle]
-pub extern "system" fn Java_io_github_placeholder_qxgps_QxgpsMonitorNative_pollOnce(
+pub extern "system" fn Java_io_github_jr551_qxgps_QxgpsMonitorNative_pollOnce(
     _env: jni::sys::JNIEnv,
     _class: jni::sys::jclass,
 ) -> jni::sys::jint {

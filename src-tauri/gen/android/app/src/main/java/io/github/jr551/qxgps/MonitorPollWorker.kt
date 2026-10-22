@@ -1,4 +1,4 @@
-package io.github.placeholder.qxgps
+package io.github.jr551.qxgps
 
 import android.content.Context
 import androidx.work.CoroutineWorker
